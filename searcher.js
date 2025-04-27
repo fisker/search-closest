@@ -31,7 +31,7 @@ class Searcher {
       searchInDirectory(directory, nameOrNames, filter, {allowSymlinks})
   }
 
-  #search(directory, shouldCache) {
+  #search(directory, shouldCache = true) {
     const cache = this.#cache
 
     // Always cache the result, so we can use it when `shouldCache` is set to `true`
