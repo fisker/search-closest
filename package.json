@@ -43,6 +43,12 @@
     "test": "node --test",
     "test-coverage": "c8 yarn test"
   },
+  "c8": {
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  },
   "dependencies": {
     "find-in-directory": "^2.0.0",
     "iterate-directory-up": "^1.1.1",
