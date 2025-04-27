@@ -2,7 +2,7 @@ import {findDirectory, findFile} from 'find-in-directory'
 import iterateDirectoryUp from 'iterate-directory-up'
 
 /**
-@import {NameOrNames, Predicate, findDirectory, findFile} from 'find-in-directory'
+@import findInDirectory from 'find-in-directory'
 */
 
 class Searcher {
@@ -12,11 +12,11 @@ class Searcher {
 
   /**
   @param {{
-    nameOrNames: NameOrNames,
+    nameOrNames: findInDirectory.NameOrNames,
     allowSymlinks: boolean,
-    filter: Predicate,
+    filter: findInDirectory.Predicate,
     stopDirectory?: string,
-    searchInDirectory: typeof findFile | typeof findDirectory,
+    searchInDirectory: typeof findInDirectory.findFile | typeof findInDirectory.findDirectory,
   }} param0
   */
   constructor({

@@ -103,3 +103,4 @@ typings/
 dist/
 fixtures/link-to-directory
 fixtures/link-to-file
+/searcher.d.ts

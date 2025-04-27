@@ -23,9 +23,13 @@
     },
     "./*": "./*"
   },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "build": "run-p clean \"build:*\"",
-    "build:types": "tsc --emitDeclarationOnly --noEmit false",
+    "build:types": "tsc --emitDeclarationOnly --noEmit false && yarn fix",
     "lint": "run-p --continue-on-error \"lint:*\"",
     "lint:eslint": "eslint .",
     "fix": "run-p --continue-on-error \"fix:*\"",
