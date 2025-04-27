@@ -1,0 +1,15 @@
+{
+  "include": [
+    "index.js"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "declarationMap": false,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "name": "search-closest",
+  "description": "Find closest file or directory by names.",
+  "homepage": "https://github.com/fisker/undefined#readme",
+  "bugs": {
+    "url": "https://github.com/fisker/undefined/issues"
+  },
+  "repository": "fisker/undefined",
+  "funding": "https://github.com/fisker/undefined?sponsor=1",
+  "license": "MIT",
+  "author": {
+    "name": "fisker Cheung",
+    "email": "lionkay@gmail.com",
+    "url": "https://www.fiskercheung.com/"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./*": "./*"
+  },
+  "scripts": {
+    "build": "run-p clean \"build:*\"",
+    "build:types": "tsc --emitDeclarationOnly --noEmit false",
+    "lint": "run-p --continue-on-error \"lint:*\"",
+    "lint:eslint": "eslint .",
+    "fix": "run-p --continue-on-error \"fix:*\"",
+    "fix:eslint": "yarn lint:eslint --fix",
+    "prepare": "husky install",
+    "lint:markdown": "markdownlint-cli2",
+    "fix:markdown": "yarn lint:markdown --fix",
+    "dist": "run-p \"dist:*\"",
+    "dist:npm": "release-it",
+    "clean": "run-p \"clean:*\"",
+    "clean:dist": "del-cli dist",
+    "lint:prettier": "prettier . --check",
+    "fix:prettier": "prettier . --write",
+    "lint:package-json": "yarn run fix:package-json --check",
+    "fix:package-json": "sort-package-json \"package.json\" \"packages/*/package.json\"",
+    "test": "node --test",
+    "test-coverage": "c8 yarn test"
+  },
+  "dependencies": {
+    "find-in-directory": "^2.0.0",
+    "iterate-directory-up": "^1.1.1",
+    "url-or-path": "^2.5.0"
+  },
+  "devDependencies": {
+    "@fisker/eslint-config": "14.0.0",
+    "@fisker/lint-staged-config": "3.3.5",
+    "@fisker/markdownlint-cli2-config": "0.0.3",
+    "@fisker/prettier-config": "5.1.5",
+    "del-cli": "6.0.0",
+    "eslint": "9.25.1",
+    "husky": "9.1.7",
+    "lint-staged": "15.5.1",
+    "markdownlint-cli2": "0.17.2",
+    "npm-run-all2": "7.0.2",
+    "prettier": "3.5.3",
+    "sort-package-json": "3.0.0",
+    "typescript": "5.8.3"
+  },
+  "packageManager": "yarn@4.9.1",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
