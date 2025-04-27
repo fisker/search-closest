@@ -97,3 +97,4 @@ function clearCache() {
 }
 
 export {clearCache, searchClosestDirectory, searchClosestFile}
+export {DirectorySearcher, FileSearcher} from './searcher.js'
