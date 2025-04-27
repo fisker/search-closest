@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import os from 'node:os'
-import test from 'node:test'
 import url from 'node:url'
+import test from 'ava'
 import {searchClosestDirectory, searchClosestFile} from './index.js'
 
 const fixtures = new URL('./fixtures/', import.meta.url)
@@ -40,42 +40,42 @@ try {
   }
 }
 
-test('main', async () => {
+test('main', async (t) => {
   // Files
-  assert.equal(await searchClosestFile(fixtures, 'a-file'), getPath('a-file'))
-  assert.equal(await searchClosestFile(fixtures, ['a-file']), getPath('a-file'))
-  assert.equal(await searchClosestFile(fixtures, ['non-exits-file']), undefined)
+  t.is(await searchClosestFile(fixtures, 'a-file'), getPath('a-file'))
+  t.is(await searchClosestFile(fixtures, ['a-file']), getPath('a-file'))
+  t.is(await searchClosestFile(fixtures, ['non-exits-file']), undefined)
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, 'a-directory'),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['a-directory']),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['non-exits-directory']),
     undefined,
   )
 })
 
-test('Should only match exists files/directories', async () => {
+test('Should only match exists files/directories', async (t) => {
   // Files
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['a-file', 'non-exits-file']),
     getPath('a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['non-exits-file', 'a-file']),
     getPath('a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['non-exits-file', 'a-file'], () => true),
     getPath('a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(
       fixtures,
       ['non-exits-file', 'a-directory', 'a-file'],
@@ -85,21 +85,21 @@ test('Should only match exists files/directories', async () => {
   )
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, [
       'a-directory',
       'non-exits-directory',
     ]),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, [
       'non-exits-directory',
       'a-directory',
     ]),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(
       fixtures,
       ['non-exits-directory', 'a-directory'],
@@ -107,7 +107,7 @@ test('Should only match exists files/directories', async () => {
     ),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(
       fixtures,
       ['non-exits-directory', 'a-file', 'a-directory'],
@@ -117,31 +117,31 @@ test('Should only match exists files/directories', async () => {
   )
 })
 
-test('Order matters', async () => {
+test('Order matters', async (t) => {
   // Files
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['a-file', 'b-file']),
     getPath('a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['b-file', 'a-file']),
     getPath('b-file'),
   )
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['a-directory', 'b-directory']),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['b-directory', 'a-directory']),
     getPath('b-directory'),
   )
 })
 
-test('Predicate', async () => {
+test('Predicate', async (t) => {
   // Files
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['b-file', 'a-file'], {
       filter: ({name}) => name === 'a-file',
     }),
@@ -149,7 +149,7 @@ test('Predicate', async () => {
   )
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['b-directory', 'a-directory'], {
       filter: ({name}) => name === 'a-directory',
     }),
@@ -158,41 +158,41 @@ test('Predicate', async () => {
 })
 
 const testSymlink = supportSymlink ? test : test.skip
-testSymlink.skip('Options', async () => {
+testSymlink.skip('Options', async (t) => {
   // Files
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       allowSymlinks: false,
     }),
     undefined,
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       filter: () => true,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       filter: () => true,
       allowSymlinks: false,
     }),
     undefined,
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
-  assert.equal(
+  t.is(
     await searchClosestFile(fixtures, ['link-to-a-file'], {
       allowSymlinks: false,
     }),
@@ -200,39 +200,39 @@ testSymlink.skip('Options', async () => {
   )
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       allowSymlinks: false,
     }),
     undefined,
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       filter: () => true,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       filter: () => true,
       allowSymlinks: false,
     }),
     undefined,
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
       allowSymlinks: false,
     }),
@@ -240,45 +240,39 @@ testSymlink.skip('Options', async () => {
   )
 })
 
-test('Should accept url, absolute path, or relative path', async () => {
+test('Should accept url, absolute path, or relative path', async (t) => {
   // Files
-  assert.equal(
-    await searchClosestFile(fixtures.href, 'a-file'),
-    getPath('a-file'),
-  )
-  assert.equal(
+  t.is(await searchClosestFile(fixtures.href, 'a-file'), getPath('a-file'))
+  t.is(
     await searchClosestFile(url.fileURLToPath(fixtures), 'a-file'),
     getPath('a-file'),
   )
-  assert.equal(
-    await searchClosestFile('./fixtures/', 'a-file'),
-    getPath('a-file'),
-  )
+  t.is(await searchClosestFile('./fixtures/', 'a-file'), getPath('a-file'))
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(fixtures.href, 'a-directory'),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory(url.fileURLToPath(fixtures), 'a-directory'),
     getPath('a-directory'),
   )
-  assert.equal(
+  t.is(
     await searchClosestDirectory('./fixtures/', 'a-directory'),
     getPath('a-directory'),
   )
 })
 
-test('Should work for deep names too', async () => {
+test('Should work for deep names too', async (t) => {
   // Files
-  assert.equal(
+  t.is(
     await searchClosestFile(new URL('../', fixtures.href), 'fixtures/a-file'),
     getPath('a-file'),
   )
 
   // Directories
-  assert.equal(
+  t.is(
     await searchClosestDirectory(
       new URL('../', fixtures.href),
       'fixtures/a-directory',
