@@ -39,3 +39,4 @@ export function searchClosestFile(
 import type {UrlOrPath} from 'url-or-path'
 import type {Predicate} from 'find-in-directory'
 import type {NameOrNames} from 'find-in-directory'
+export {DirectorySearcher, FileSearcher} from './searcher.js'
