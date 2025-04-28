@@ -5,7 +5,6 @@ import iterateDirectoryUp from 'iterate-directory-up'
 /**
 @import {NameOrNames, Predicate, FindOptions} from 'find-in-directory'
 
-@typedef {Parameters<typeof iterateDirectoryUp>[0]} UrlOrPath
 @typedef {Parameters<typeof iterateDirectoryUp>[1]} OptionalUrlOrPath
 
 @typedef {{
