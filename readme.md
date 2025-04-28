@@ -64,7 +64,7 @@ console.log(await directorySearcher.search())
 
 Type: `string[] | string`
 
-The file/directory name or names to find.
+The file or directory name or names to find.
 
 #### `options` (Searcher)
 
@@ -137,7 +137,7 @@ console.log(await searchClosestDirectory(['.git']))
 
 Type: `string[] | string`
 
-The file/directory name or names to find.
+The file or directory name or names to find.
 
 #### `options` (searchClosest)
 
