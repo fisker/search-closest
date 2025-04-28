@@ -29,7 +29,7 @@
   ],
   "scripts": {
     "build": "run-p clean \"build:*\"",
-    "build:types": "tsc --emitDeclarationOnly --noEmit false && yarn fix",
+    "build:types": "tsc --emitDeclarationOnly --noEmit false",
     "lint": "run-p --continue-on-error \"lint:*\"",
     "lint:eslint": "eslint .",
     "fix": "run-p --continue-on-error \"fix:*\"",
@@ -45,7 +45,9 @@
     "fix:prettier": "prettier . --write",
     "lint:package-json": "yarn run fix:package-json --check",
     "fix:package-json": "sort-package-json \"package.json\" \"packages/*/package.json\"",
-    "test": "ava",
+    "test": "run-p \"test:*\"",
+    "test:js": "ava",
+    "test:types": "yarn build && tsd",
     "test-coverage": "c8 yarn test",
     "release": "run-s fix test dist"
   },
@@ -56,9 +58,8 @@
     ]
   },
   "dependencies": {
-    "find-in-directory": "^2.0.0",
-    "iterate-directory-up": "^1.2.0",
-    "url-or-path": "^2.5.0"
+    "find-in-directory": "^2.0.1",
+    "iterate-directory-up": "^1.2.1"
   },
   "devDependencies": {
     "@fisker/eslint-config": "14.0.0",
@@ -77,6 +78,7 @@
     "prettier": "3.5.3",
     "release-it": "19.0.1",
     "sort-package-json": "3.0.0",
+    "tsd": "0.32.0",
     "typescript": "5.8.3"
   },
   "packageManager": "yarn@4.9.1",

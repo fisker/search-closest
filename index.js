@@ -1,16 +1,17 @@
 import process from 'node:process'
 import {findDirectory, findFile} from 'find-in-directory'
 import iterateDirectoryUp from 'iterate-directory-up'
-import {toAbsolutePath} from 'url-or-path'
 
 /**
-@import * as findInDirectory from 'find-in-directory'
-@import {UrlOrPath} from 'url-or-path'
+@import {NameOrNames, Predicate, FindOptions} from 'find-in-directory'
+
+@typedef {Parameters<typeof iterateDirectoryUp>[0]} UrlOrPath
+@typedef {Parameters<typeof iterateDirectoryUp>[1]} OptionalUrlOrPath
 
 @typedef {{
-  allowSymlinks?: boolean,
-  filter?: findInDirectory.Predicate,
-  stopDirectory?: string,
+  allowSymlinks?: FindOptions['allowSymlinks'],
+  filter?: Predicate,
+  stopDirectory?: OptionalUrlOrPath,
   cache?: boolean,
 }} SearcherOptions
 
@@ -20,13 +21,13 @@ import {toAbsolutePath} from 'url-or-path'
 
 @typedef {
   SearcherOptions & {
-    searchInDirectory: typeof findInDirectory.findFile | typeof findInDirectory.findDirectory
+    searchInDirectory: typeof findFile | typeof findDirectory
   }
 } GenericSearcherOptions
 
 @typedef {
   Omit<SearcherOptions, 'cache'> & {
-    cwd?: UrlOrPath,
+    cwd?: OptionalUrlOrPath,
   }
 } SearchClosestOptions
 */
@@ -38,7 +39,7 @@ class Searcher {
   #searchInDirectory
 
   /**
-  @param {findInDirectory.NameOrNames} nameOrNames
+  @param {NameOrNames} nameOrNames
   @param {GenericSearcherOptions} options
   */
   constructor(
@@ -46,8 +47,6 @@ class Searcher {
     {allowSymlinks, filter, stopDirectory, searchInDirectory, cache},
   ) {
     this.#stopDirectory = stopDirectory
-      ? toAbsolutePath(stopDirectory)
-      : undefined
     this.#cache = cache ?? true
     this.#searchInDirectory = (directory) =>
       searchInDirectory(directory, nameOrNames, filter, {allowSymlinks})
@@ -67,14 +66,12 @@ class Searcher {
   /**
   Find closest file or directory matches name or names.
 
-  @param {UrlOrPath} [startDirectory]
+  @param {OptionalUrlOrPath} [startDirectory]
   @param {SearchOptions} [options]
   @returns {Promise<string | void>}
   */
   async search(startDirectory, options) {
-    startDirectory ??= startDirectory
-      ? toAbsolutePath(startDirectory)
-      : process.cwd()
+    startDirectory ??= process.cwd()
     for (const directory of iterateDirectoryUp(
       startDirectory,
       this.#stopDirectory,
@@ -105,7 +102,7 @@ class Searcher {
 
 class FileSearcher extends Searcher {
   /**
-  @param {findInDirectory.NameOrNames} nameOrNames
+  @param {NameOrNames} nameOrNames
   @param {SearcherOptions} [options]
   */
   constructor(nameOrNames, options) {
@@ -113,12 +110,9 @@ class FileSearcher extends Searcher {
   }
 }
 
-/**
-@property {any} search
-*/
 class DirectorySearcher extends Searcher {
   /**
-  @param {findInDirectory.NameOrNames} nameOrNames
+  @param {NameOrNames} nameOrNames
   @param {SearcherOptions} [options]
   */
   constructor(nameOrNames, options) {
@@ -127,7 +121,7 @@ class DirectorySearcher extends Searcher {
 }
 
 /**
-@param {findInDirectory.NameOrNames} nameOrNames
+@param {NameOrNames} nameOrNames
 @param {SearchClosestOptions & {
   Searcher: typeof FileSearcher | typeof DirectorySearcher
 }} options
@@ -142,7 +136,7 @@ function searchClosest(nameOrNames, options) {
 }
 
 /**
-@param {findInDirectory.NameOrNames} nameOrNames
+@param {NameOrNames} nameOrNames
 @param {SearchClosestOptions} [options]
 @returns {ReturnType<FileSearcher['search']>}
 */
@@ -151,7 +145,7 @@ function searchClosestFile(nameOrNames, options) {
 }
 
 /**
-@param {findInDirectory.NameOrNames} nameOrNames
+@param {NameOrNames} nameOrNames
 @param {SearchClosestOptions} [options]
 @returns {ReturnType<DirectorySearcher['search']>}
 */

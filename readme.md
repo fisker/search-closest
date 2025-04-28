@@ -117,6 +117,10 @@ Default: `true`
 
 Whether the result cache should be used.
 
+### `{FileSearcher,DirectorySearcher}#clearCache()`
+
+Clear cached search result.
+
 ### `{searchClosestFile,searchClosestDirectory}(nameOrNames, options?)`
 
 > [!Warning]
