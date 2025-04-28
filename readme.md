@@ -46,7 +46,7 @@ console.log(await searchClosestDirectory(['.git']))
 
 ## API
 
-### `new {FileSearcher, DirectorySearcher}(nameOrNames, options?)`
+### `new {FileSearcher,DirectorySearcher}(nameOrNames, options?)`
 
 ```js
 import {FileSearcher, DirectorySearcher} from 'search-closest'
@@ -97,7 +97,7 @@ Default: `true`
 
 Whether the search result should be cached.
 
-### `{FileSearcher, DirectorySearcher}#search(startDirectory?, options)`
+### `{FileSearcher,DirectorySearcher}#search(startDirectory?, options)`
 
 #### `startDirectory` (Searcher#search)
 
@@ -117,7 +117,7 @@ Default: `true`
 
 Whether the result cache should be used.
 
-### `{searchClosestFile, searchClosestDirectory}(nameOrNames, options?)`
+### `{searchClosestFile,searchClosestDirectory}(nameOrNames, options?)`
 
 > [!Warning]
 >
