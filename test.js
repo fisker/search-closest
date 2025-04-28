@@ -12,7 +12,8 @@ await Promise.allSettled([
   fs.unlink(new URL('./link-to-a-directory', fixtures)),
 ])
 
-let supportSymlink = true
+const IS_WINDOWS = os.platform() === 'win32'
+let supportSymlink = !IS_WINDOWS
 try {
   await Promise.all([
     fs.symlink(
@@ -22,20 +23,27 @@ try {
     fs.symlink(
       new URL('./a-directory', fixtures),
       new URL('./link-to-a-directory', fixtures),
+      IS_WINDOWS ? 'junction' : undefined,
     ),
   ])
 } catch (error) {
-  if (
-    os.platform === 'win32' &&
-    error.code === 'EPERM' &&
-    error.syscall === 'symlink'
-  ) {
+  if (!IS_WINDOWS) {
+    throw error
+  }
+}
+
+if (IS_WINDOWS) {
+  try {
+    const state = await fs.lstat(new URL('./link-to-a-directory', fixtures))
+    supportSymlink = state.isSymbolicLink()
+  } catch {
+    supportSymlink = false
+  }
+
+  if (!supportSymlink) {
     console.warn(
       "'symbolic links' tests can not run on this machine, active 'Developer Mode' may help.\nSee https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development#activate-developer-mode",
     )
-    supportSymlink = false
-  } else {
-    throw error
   }
 }
 
@@ -168,7 +176,7 @@ test('Predicate', async (t) => {
 })
 
 const testSymlink = supportSymlink ? test : test.skip
-testSymlink.skip('Options', async (t) => {
+testSymlink('Options', async (t) => {
   // Files
   t.is(
     await searchClosestFile(['link-to-a-file'], {
