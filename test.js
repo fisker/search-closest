@@ -41,21 +41,21 @@ try {
 
 test('main', async (t) => {
   // Files
-  t.is(await searchClosestFile(fixtures, 'a-file'), getPath('a-file'))
-  t.is(await searchClosestFile(fixtures, ['a-file']), getPath('a-file'))
-  t.is(await searchClosestFile(fixtures, ['non-exits-file']), undefined)
+  t.is(await searchClosestFile('a-file', {cwd: fixtures}), getPath('a-file'))
+  t.is(await searchClosestFile(['a-file'], {cwd: fixtures}), getPath('a-file'))
+  t.is(await searchClosestFile(['non-exits-file'], {cwd: fixtures}), undefined)
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures, 'a-directory'),
+    await searchClosestDirectory('a-directory', {cwd: fixtures}),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['a-directory']),
+    await searchClosestDirectory(['a-directory'], {cwd: fixtures}),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['non-exits-directory']),
+    await searchClosestDirectory(['non-exits-directory'], {cwd: fixtures}),
     undefined,
   )
 })
@@ -63,54 +63,55 @@ test('main', async (t) => {
 test('Should only match exists files/directories', async (t) => {
   // Files
   t.is(
-    await searchClosestFile(fixtures, ['a-file', 'non-exits-file']),
+    await searchClosestFile(['a-file', 'non-exits-file'], {cwd: fixtures}),
     getPath('a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['non-exits-file', 'a-file']),
+    await searchClosestFile(['non-exits-file', 'a-file'], {cwd: fixtures}),
     getPath('a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['non-exits-file', 'a-file'], () => true),
+    await searchClosestFile(['non-exits-file', 'a-file'], {
+      cwd: fixtures,
+      filter: () => true,
+    }),
     getPath('a-file'),
   )
   t.is(
-    await searchClosestFile(
-      fixtures,
-      ['non-exits-file', 'a-directory', 'a-file'],
-      () => true,
-    ),
+    await searchClosestFile(['non-exits-file', 'a-directory', 'a-file'], {
+      cwd: fixtures,
+      filter: () => true,
+    }),
     getPath('a-file'),
   )
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures, [
-      'a-directory',
-      'non-exits-directory',
-    ]),
+    await searchClosestDirectory(['a-directory', 'non-exits-directory'], {
+      cwd: fixtures,
+    }),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, [
-      'non-exits-directory',
-      'a-directory',
-    ]),
+    await searchClosestDirectory(['non-exits-directory', 'a-directory'], {
+      cwd: fixtures,
+    }),
+    getPath('a-directory'),
+  )
+  t.is(
+    await searchClosestDirectory(['non-exits-directory', 'a-directory'], {
+      cwd: fixtures,
+      filter: () => true,
+    }),
     getPath('a-directory'),
   )
   t.is(
     await searchClosestDirectory(
-      fixtures,
-      ['non-exits-directory', 'a-directory'],
-      () => true,
-    ),
-    getPath('a-directory'),
-  )
-  t.is(
-    await searchClosestDirectory(
-      fixtures,
       ['non-exits-directory', 'a-file', 'a-directory'],
-      () => true,
+      {
+        cwd: fixtures,
+        filter: () => true,
+      },
     ),
     getPath('a-directory'),
   )
@@ -119,21 +120,29 @@ test('Should only match exists files/directories', async (t) => {
 test('Order matters', async (t) => {
   // Files
   t.is(
-    await searchClosestFile(fixtures, ['a-file', 'b-file']),
+    await searchClosestFile(['a-file', 'b-file'], {
+      cwd: fixtures,
+    }),
     getPath('a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['b-file', 'a-file']),
+    await searchClosestFile(['b-file', 'a-file'], {
+      cwd: fixtures,
+    }),
     getPath('b-file'),
   )
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures, ['a-directory', 'b-directory']),
+    await searchClosestDirectory(['a-directory', 'b-directory'], {
+      cwd: fixtures,
+    }),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['b-directory', 'a-directory']),
+    await searchClosestDirectory(['b-directory', 'a-directory'], {
+      cwd: fixtures,
+    }),
     getPath('b-directory'),
   )
 })
@@ -141,7 +150,8 @@ test('Order matters', async (t) => {
 test('Predicate', async (t) => {
   // Files
   t.is(
-    await searchClosestFile(fixtures, ['b-file', 'a-file'], {
+    await searchClosestFile(['b-file', 'a-file'], {
+      cwd: fixtures,
       filter: ({name}) => name === 'a-file',
     }),
     getPath('a-file'),
@@ -149,7 +159,8 @@ test('Predicate', async (t) => {
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures, ['b-directory', 'a-directory'], {
+    await searchClosestDirectory(['b-directory', 'a-directory'], {
+      cwd: fixtures,
       filter: ({name}) => name === 'a-directory',
     }),
     getPath('a-directory'),
@@ -160,39 +171,45 @@ const testSymlink = supportSymlink ? test : test.skip
 testSymlink.skip('Options', async (t) => {
   // Files
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
   )
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       filter: () => true,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       filter: () => true,
       allowSymlinks: false,
     }),
     undefined,
   )
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
   t.is(
-    await searchClosestFile(fixtures, ['link-to-a-file'], {
+    await searchClosestFile(['link-to-a-file'], {
+      cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
@@ -200,39 +217,45 @@ testSymlink.skip('Options', async (t) => {
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       filter: () => true,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       filter: () => true,
       allowSymlinks: false,
     }),
     undefined,
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
   t.is(
-    await searchClosestDirectory(fixtures, ['link-to-a-directory'], {
+    await searchClosestDirectory(['link-to-a-directory'], {
+      cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
@@ -241,24 +264,32 @@ testSymlink.skip('Options', async (t) => {
 
 test('Should accept url, absolute path, or relative path', async (t) => {
   // Files
-  t.is(await searchClosestFile(fixtures.href, 'a-file'), getPath('a-file'))
   t.is(
-    await searchClosestFile(url.fileURLToPath(fixtures), 'a-file'),
+    await searchClosestFile('a-file', {cwd: fixtures.href}),
     getPath('a-file'),
   )
-  t.is(await searchClosestFile('./fixtures/', 'a-file'), getPath('a-file'))
+  t.is(
+    await searchClosestFile('a-file', {cwd: url.fileURLToPath(fixtures)}),
+    getPath('a-file'),
+  )
+  t.is(
+    await searchClosestFile('a-file', {cwd: './fixtures/'}),
+    getPath('a-file'),
+  )
 
   // Directories
   t.is(
-    await searchClosestDirectory(fixtures.href, 'a-directory'),
+    await searchClosestDirectory('a-directory', {cwd: fixtures.href}),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory(url.fileURLToPath(fixtures), 'a-directory'),
+    await searchClosestDirectory('a-directory', {
+      cwd: url.fileURLToPath(fixtures),
+    }),
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory('./fixtures/', 'a-directory'),
+    await searchClosestDirectory('a-directory', {cwd: './fixtures/'}),
     getPath('a-directory'),
   )
 })
@@ -266,16 +297,17 @@ test('Should accept url, absolute path, or relative path', async (t) => {
 test('Should work for deep names too', async (t) => {
   // Files
   t.is(
-    await searchClosestFile(new URL('../', fixtures.href), 'fixtures/a-file'),
+    await searchClosestFile('fixtures/a-file', {
+      cwd: new URL('../', fixtures.href),
+    }),
     getPath('a-file'),
   )
 
   // Directories
   t.is(
-    await searchClosestDirectory(
-      new URL('../', fixtures.href),
-      'fixtures/a-directory',
-    ),
+    await searchClosestDirectory('fixtures/a-directory', {
+      cwd: new URL('../', fixtures.href),
+    }),
     getPath('a-directory'),
   )
 })
