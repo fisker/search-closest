@@ -1,7 +1,9 @@
 {
-  "[javascript]": {
+  "[javascript][markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }

@@ -22,86 +22,150 @@ yarn add search-closest
 ## Usage
 
 ```js
-import {searchClosestFile} from 'search-closest'
+import {
+  FileSearcher,
+  DirectorySearcher,
+  searchClosestFile,
+  searchClosestDirectory,
+} from 'search-closest'
 
-const file = await searchClosestFile(process.cwd(), [
-  'package.json',
-  'package.json5',
-  'package.yaml',
-])
+const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
+console.log(await fileSearcher.search())
+// "/path/to/config.json"
 
-// "/path/to/package.json"
+const directorySearcher = new DirectorySearcher(['.git'])
+console.log(await directorySearcher.search())
+// "/path/to/.git"
+
+console.log(await searchClosestFile(['config.json', 'config.yaml']))
+// "/path/to/config.json"
+
+console.log(await searchClosestDirectory(['.git']))
+// "/path/to/.git"
 ```
 
 ## API
 
-### `{searchClosestFile, searchClosestDirectory}(startDirectory, nameOrNames,  options?)`
+### `new {FileSearcher,DirectorySearcher}(nameOrNames, options?)`
 
-#### `startDirectory`
+```js
+import {FileSearcher, DirectorySearcher} from 'search-closest'
 
-Type: `URL | string`
+const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
+console.log(await fileSearcher.search())
+// "/path/to/config.json"
 
-The directory start to search.
+const directorySearcher = new DirectorySearcher(['.git'])
+console.log(await directorySearcher.search())
+// "/path/to/.git"
+```
 
-#### `nameOrNames`
+#### `nameOrNames` (Searcher)
 
 Type: `string[] | string`
 
-The file/directory name or names to find.
+The file or directory name or names to find.
 
-#### `options`
+#### `options` (Searcher)
 
-#### `options.stopDirectory`
+Type: `object`
+
+##### `options.allowSymlinks` (Searcher)
+
+Type: `boolean`\
+Default: `true`
+
+Whether symlinks should be matched.
+
+##### `options.filter` (Searcher)
+
+Type: `(fileOrDirectory: {name: string, path: string}) => Promise<boolean>`
+
+To exclude specific file or directory.
+
+##### `options.stopDirectory` (Searcher)
 
 Type: `URL | string`\
 Default: Root directory
 
 The last directory to search before stopping.
 
-Type: `boolean`
-
-#### `options.allowSymlinks`
+##### `options.cache` (Searcher)
 
 Type: `boolean`
 Default: `true`
 
-Should allow symlinks or not.
+Whether the search result should be cached.
 
-#### `options.filter`
+### `{FileSearcher,DirectorySearcher}#search(startDirectory?, options)`
 
-Type: `(fileOrDirectory: {name: string, path: string}) => Promise<boolean>`
+#### `startDirectory` (Searcher#search)
+
+Type: `URL | string`\
+Default: `process.cwd()`
+
+Where the search begins.
+
+#### `options` (Searcher#search)
+
+Type: `object`
+
+#### `options.cache` (Searcher#search)
+
+Type: `boolean`
+Default: `true`
+
+Whether the result cache should be used.
+
+### `{searchClosestFile,searchClosestDirectory}(nameOrNames, options?)`
 
 > [!Warning]
 >
-> To make the cache work, `filter` should be a function reference, since it will be part of the cache key.
-
-Instead of inline the `filter` function,
+> The search result won't be cached, use the `FileSearcher` or `DirectorySearcher` if you want more efficient functionality.
 
 ```js
-searchClosestFile(process.cwd(), 'file', {
-  async filter(file) {
-    const content = await fs.readFile(file.path)
-    return content.includes('mark')
-  },
-})
+import {searchClosestFile, searchClosestDirectory} from 'search-closest'
+
+console.log(await searchClosestFile(['config.json', 'config.yaml']))
+// "/path/to/config.json"
+
+console.log(await searchClosestDirectory(['.git']))
+// "/path/to/.git"
 ```
 
-Use a function reference instead
+#### `nameOrNames` (searchClosest)
 
-```js
-async function filter(file) {
-  const content = await fs.readFile(file.path)
-  return content.includes('mark')
-}
+Type: `string[] | string`
 
-searchClosestFile(process.cwd(), 'file', {
-  filter,
-})
-```
+The file or directory name or names to find.
 
-#### `options.cache`
+#### `options` (searchClosest)
 
-Type: `boolean`
+Type: `object`
+
+#### `options.cwd` (searchClosest)
+
+Type: `URL | string`\
+Default: `process.cwd()`
+
+The directory start to search.
+
+##### `options.allowSymlinks` (searchClosest)
+
+Type: `boolean`\
 Default: `true`
 
-Should use cached result.
+Whether symlinks should be matched.
+
+##### `options.filter` (searchClosest)
+
+Type: `(fileOrDirectory: {name: string, path: string}) => Promise<boolean>`
+
+To exclude specific file or directory.
+
+##### `options.stopDirectory` (searchClosest)
+
+Type: `URL | string`\
+Default: Root directory
+
+The last directory to search before stopping.
