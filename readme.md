@@ -22,11 +22,26 @@ yarn add search-closest
 ## Usage
 
 ```js
-import {searchClosestFile} from 'search-closest'
+import {
+  FileSearcher,
+  DirectorySearcher,
+  searchClosestFile,
+  searchClosestDirectory,
+} from 'search-closest'
 
-const file = await searchClosestFile(['config.json', 'config.yaml'])
-
+const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
+console.log(await fileSearcher.search())
 // "/path/to/config.json"
+
+const directorySearcher = new DirectorySearcher(['.git'])
+console.log(await directorySearcher.search())
+// "/path/to/.git"
+
+console.log(await searchClosestFile(['config.json', 'config.yaml']))
+// "/path/to/config.json"
+
+console.log(await searchClosestDirectory(['.git']))
+// "/path/to/.git"
 ```
 
 ## API
@@ -37,13 +52,11 @@ const file = await searchClosestFile(['config.json', 'config.yaml'])
 import {FileSearcher, DirectorySearcher} from 'search-closest'
 
 const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
-
-const file = await fileSearcher.search()
+console.log(await fileSearcher.search())
 // "/path/to/config.json"
 
 const directorySearcher = new DirectorySearcher(['.git'])
-
-const directory = await directorySearcher.search()
+console.log(await directorySearcher.search())
 // "/path/to/.git"
 ```
 
@@ -109,6 +122,16 @@ Whether the result cache should be used.
 > [!Warning]
 >
 > The search result won't be cached, use the `FileSearcher` or `DirectorySearcher` if you want more efficient functionality.
+
+```js
+import {searchClosestFile, searchClosestDirectory} from 'search-closest'
+
+console.log(await searchClosestFile(['config.json', 'config.yaml']))
+// "/path/to/config.json"
+
+console.log(await searchClosestDirectory(['.git']))
+// "/path/to/.git"
+```
 
 #### `nameOrNames` (searchClosest)
 
