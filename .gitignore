@@ -102,3 +102,4 @@ typings/
 .deleted/
 dist/
 /index.d.ts
+/fixtures
