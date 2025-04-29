@@ -8,8 +8,11 @@ const fixtures = new URL('./fixtures/', import.meta.url)
 const getPath = (path) => url.fileURLToPath(new URL(path, fixtures))
 
 await Promise.allSettled([
-  fs.unlink(new URL('./link-to-a-file', fixtures)),
-  fs.unlink(new URL('./link-to-a-directory', fixtures)),
+  fs.rm(new URL('./link-to-a-file', fixtures), {force: true}),
+  fs.rm(new URL('./link-to-a-directory', fixtures), {
+    force: true,
+    recursive: true,
+  }),
 ])
 
 const IS_WINDOWS = os.platform() === 'win32'
