@@ -22,6 +22,12 @@ async function createFixtures(depth = 3) {
 
   await createDirectory(directory)
 
+  // File and directory in root
+  await Promise.all([
+    createFile(new URL('./file-in-root', FIXTURES_DIRECTORY)),
+    createDirectory(new URL('./directory-in-root', FIXTURES_DIRECTORY)),
+  ])
+
   // Two files
   const fileA = new URL('./a-file', directory)
   const fileB = new URL('./b-file', directory)
@@ -37,8 +43,8 @@ async function createFixtures(depth = 3) {
 
   // File and directory in `a-directory`
   await Promise.all([
-    createFile(new URL('./file', directoryA)),
-    createDirectory(new URL('./directory', directoryA)),
+    createFile(new URL('./file-in-a-directory', directoryA)),
+    createDirectory(new URL('./directory-in-a-directory', directoryA)),
   ])
 
   // Symbolic link to file and directory
@@ -76,3 +82,4 @@ async function createFixtures(depth = 3) {
 }
 
 export default createFixtures
+export {FIXTURES_DIRECTORY}

@@ -52,6 +52,11 @@
     "release": "run-s fix test dist"
   },
   "c8": {
+    "exclude": [
+      ".yarn",
+      "scripts",
+      "test.js"
+    ],
     "reporter": [
       "lcov",
       "text"

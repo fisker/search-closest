@@ -1,8 +1,13 @@
 import path from 'node:path'
 import url from 'node:url'
 import test from 'ava'
-import {searchClosestDirectory, searchClosestFile} from './index.js'
-import createFixtures from './scripts/create-fixtures.js'
+import {
+  DirectorySearcher,
+  FileSearcher,
+  searchClosestDirectory,
+  searchClosestFile,
+} from './index.js'
+import createFixtures, {FIXTURES_DIRECTORY} from './scripts/create-fixtures.js'
 
 const {directory: fixtures, supportSymlink} = await createFixtures()
 const relativeFixturesPath = path.relative(
@@ -269,13 +274,33 @@ test('Should accept url, absolute path, or relative path', async (t) => {
 test('Should work for deep names too', async (t) => {
   // Files
   t.is(
-    await searchClosestFile('a-directory/file', {cwd: fixtures}),
-    getPath('a-directory/file'),
+    await searchClosestFile('a-directory/file-in-a-directory', {cwd: fixtures}),
+    getPath('a-directory/file-in-a-directory'),
   )
 
   // Directories
   t.is(
-    await searchClosestDirectory('a-directory/directory', {cwd: fixtures}),
-    getPath('a-directory/directory'),
+    await searchClosestDirectory('a-directory/directory-in-a-directory', {
+      cwd: fixtures,
+    }),
+    getPath('a-directory/directory-in-a-directory'),
   )
+})
+
+test('Searcher', async (t) => {
+  const fileSearcher = new FileSearcher('file-in-root')
+  const directorySearcher = new DirectorySearcher('directory-in-root')
+
+  t.is(
+    await fileSearcher.search(fixtures, {cache: false}),
+    url.fileURLToPath(new URL('./file-in-root', FIXTURES_DIRECTORY)),
+  )
+
+  t.is(
+    await directorySearcher.search(fixtures),
+    url.fileURLToPath(new URL('./directory-in-root', FIXTURES_DIRECTORY)),
+  )
+
+  t.is(fileSearcher.clearCache(), undefined)
+  t.is(directorySearcher.clearCache(), undefined)
 })
