@@ -125,13 +125,16 @@ class DirectorySearcher extends Searcher {
   Searcher: typeof FileSearcher | typeof DirectorySearcher
 }} options
 */
-function searchClosest(nameOrNames, options) {
-  return new options.Searcher(nameOrNames, {
-    allowSymlinks: options.allowSymlinks,
-    filter: options.filter,
-    stopDirectory: options.stopDirectory,
+function searchClosest(
+  nameOrNames,
+  {Searcher, cwd, allowSymlinks, filter, stopDirectory},
+) {
+  return new Searcher(nameOrNames, {
+    allowSymlinks,
+    filter,
+    stopDirectory,
     cache: false,
-  }).search(options.cwd)
+  }).search(cwd)
 }
 
 /**
