@@ -29,6 +29,8 @@ import iterateDirectoryUp from 'iterate-directory-up'
     cwd?: OptionalUrlOrPath,
   }
 } SearchClosestOptions
+
+@typedef {Promise<string | void>} SearchResult
 */
 
 class Searcher {
@@ -67,7 +69,7 @@ class Searcher {
 
   @param {OptionalUrlOrPath} [startDirectory]
   @param {SearchOptions} [options]
-  @returns {Promise<string | void>}
+  @returns {SearchResult}
   */
   async search(startDirectory, options) {
     startDirectory ??= process.cwd()
@@ -140,7 +142,7 @@ function searchClosest(
 /**
 @param {NameOrNames} nameOrNames
 @param {SearchClosestOptions} [options]
-@returns {ReturnType<FileSearcher['search']>}
+@returns {SearchResult}
 */
 function searchFile(nameOrNames, options) {
   return searchClosest(nameOrNames, {...options, Searcher: FileSearcher})
@@ -149,7 +151,7 @@ function searchFile(nameOrNames, options) {
 /**
 @param {NameOrNames} nameOrNames
 @param {SearchClosestOptions} [options]
-@returns {ReturnType<DirectorySearcher['search']>}
+@returns {SearchResult}
 */
 function searchDirectory(nameOrNames, options) {
   return searchClosest(nameOrNames, {...options, Searcher: DirectorySearcher})
