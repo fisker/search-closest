@@ -7,8 +7,30 @@ import {searchClosestDirectory, searchClosestFile} from './index.js'
 const fixtures = new URL('./fixtures/', import.meta.url)
 const getPath = (path) => url.fileURLToPath(new URL(path, fixtures))
 
+await Promise.allSettled([
+  fs.unlink(new URL('./link-to-a-file', fixtures)),
+  fs.unlink(new URL('./link-to-a-directory', fixtures)),
+])
+
 const IS_WINDOWS = os.platform() === 'win32'
 let supportSymlink = !IS_WINDOWS
+try {
+  await Promise.all([
+    fs.symlink(
+      new URL('./a-file', fixtures),
+      new URL('./link-to-a-file', fixtures),
+    ),
+    fs.symlink(
+      new URL('./a-directory', fixtures),
+      new URL('./link-to-a-directory', fixtures),
+      IS_WINDOWS ? 'junction' : undefined,
+    ),
+  ])
+} catch (error) {
+  if (!IS_WINDOWS) {
+    throw error
+  }
+}
 
 if (IS_WINDOWS) {
   try {
