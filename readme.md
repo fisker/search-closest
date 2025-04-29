@@ -25,8 +25,8 @@ yarn add search-closest
 import {
   FileSearcher,
   DirectorySearcher,
-  searchClosestFile,
-  searchClosestDirectory,
+  searchFile,
+  searchDirectory,
 } from 'search-closest'
 
 const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
@@ -37,10 +37,10 @@ const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
 
-console.log(await searchClosestFile(['config.json', 'config.yaml']))
+console.log(await searchFile(['config.json', 'config.yaml']))
 // "/path/to/config.json"
 
-console.log(await searchClosestDirectory(['.git']))
+console.log(await searchDirectory(['.git']))
 // "/path/to/.git"
 ```
 
@@ -121,19 +121,19 @@ Whether the result cache should be used.
 
 Clear cached search result.
 
-### `{searchClosestFile,searchClosestDirectory}(nameOrNames, options?)`
+### `{searchFile,searchDirectory}(nameOrNames, options?)`
 
 > [!Warning]
 >
 > The search result won't be cached, use the `FileSearcher` or `DirectorySearcher` if you want more efficient functionality.
 
 ```js
-import {searchClosestFile, searchClosestDirectory} from 'search-closest'
+import {searchFile, searchDirectory} from 'search-closest'
 
-console.log(await searchClosestFile(['config.json', 'config.yaml']))
+console.log(await searchFile(['config.json', 'config.yaml']))
 // "/path/to/config.json"
 
-console.log(await searchClosestDirectory(['.git']))
+console.log(await searchDirectory(['.git']))
 // "/path/to/.git"
 ```
 

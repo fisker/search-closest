@@ -3,8 +3,8 @@ import {expectType} from 'tsd'
 import {
   FileSearcher,
   DirectorySearcher,
-  searchClosestFile,
-  searchClosestDirectory,
+  searchFile,
+  searchDirectory,
 } from './index.js'
 
 /* `FileSearcher` and `DirectorySearcher` */
@@ -124,90 +124,84 @@ expectType<string | void>(
 expectType<void>(fileSearcher.clearCache())
 expectType<void>(directorySearcher.clearCache())
 
-/* `searchClosestFile` and `searchClosestDirectory` */
+/* `searchFile` and `searchDirectory` */
 
 // `nameOrNames`
-expectType<string | void>(await searchClosestFile('name'))
-expectType<string | void>(await searchClosestDirectory('name'))
-expectType<string | void>(await searchClosestFile(['a', 'b']))
-expectType<string | void>(await searchClosestDirectory(['a', 'b']))
+expectType<string | void>(await searchFile('name'))
+expectType<string | void>(await searchDirectory('name'))
+expectType<string | void>(await searchFile(['a', 'b']))
+expectType<string | void>(await searchDirectory(['a', 'b']))
 
 // `options`
-expectType<string | void>(await searchClosestFile('name', {}))
-expectType<string | void>(await searchClosestDirectory('name', {}))
+expectType<string | void>(await searchFile('name', {}))
+expectType<string | void>(await searchDirectory('name', {}))
 
 // `options.allowSymlinks`
-expectType<string | void>(
-  await searchClosestFile('name', {allowSymlinks: true}),
-)
-expectType<string | void>(
-  await searchClosestDirectory('name', {allowSymlinks: true}),
-)
+expectType<string | void>(await searchFile('name', {allowSymlinks: true}))
+expectType<string | void>(await searchDirectory('name', {allowSymlinks: true}))
 
 // `options.cwd`
 expectType<string | void>(
-  await searchClosestFile('name', {cwd: '/path/to/directory/'}),
+  await searchFile('name', {cwd: '/path/to/directory/'}),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {cwd: '/path/to/directory/'}),
+  await searchDirectory('name', {cwd: '/path/to/directory/'}),
 )
 expectType<string | void>(
-  await searchClosestFile('name', {
+  await searchFile('name', {
     cwd: url.pathToFileURL('/path/to/directory/'),
   }),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {
+  await searchDirectory('name', {
     cwd: url.pathToFileURL('/path/to/directory/'),
   }),
 )
 expectType<string | void>(
-  await searchClosestFile('name', {
+  await searchFile('name', {
     cwd: url.pathToFileURL('/path/to/directory/').href,
   }),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {
+  await searchDirectory('name', {
     cwd: url.pathToFileURL('/path/to/directory/').href,
   }),
 )
 
 // `options.stopDirectory`
 expectType<string | void>(
-  await searchClosestFile('name', {stopDirectory: '/path/to/directory/'}),
+  await searchFile('name', {stopDirectory: '/path/to/directory/'}),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {stopDirectory: '/path/to/directory/'}),
+  await searchDirectory('name', {stopDirectory: '/path/to/directory/'}),
 )
 expectType<string | void>(
-  await searchClosestFile('name', {
+  await searchFile('name', {
     stopDirectory: url.pathToFileURL('/path/to/directory/'),
   }),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {
+  await searchDirectory('name', {
     stopDirectory: url.pathToFileURL('/path/to/directory/'),
   }),
 )
 expectType<string | void>(
-  await searchClosestFile('name', {
+  await searchFile('name', {
     stopDirectory: url.pathToFileURL('/path/to/directory/').href,
   }),
 )
 expectType<string | void>(
-  await searchClosestDirectory('name', {
+  await searchDirectory('name', {
     stopDirectory: url.pathToFileURL('/path/to/directory/').href,
   }),
 )
 
 // `options.filter`
-expectType<string | void>(await searchClosestFile('name', {filter: () => true}))
+expectType<string | void>(await searchFile('name', {filter: () => true}))
+expectType<string | void>(await searchDirectory('name', {filter: () => true}))
 expectType<string | void>(
-  await searchClosestDirectory('name', {filter: () => true}),
+  await searchFile('name', {filter: () => Promise.resolve(true)}),
 )
 expectType<string | void>(
-  await searchClosestFile('name', {filter: () => Promise.resolve(true)}),
-)
-expectType<string | void>(
-  await searchClosestDirectory('name', {filter: () => Promise.resolve(true)}),
+  await searchDirectory('name', {filter: () => Promise.resolve(true)}),
 )

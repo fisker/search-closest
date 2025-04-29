@@ -139,7 +139,7 @@ function searchClosest(nameOrNames, options) {
 @param {SearchClosestOptions} [options]
 @returns {ReturnType<FileSearcher['search']>}
 */
-function searchClosestFile(nameOrNames, options) {
+function searchFile(nameOrNames, options) {
   return searchClosest(nameOrNames, {...options, Searcher: FileSearcher})
 }
 
@@ -148,13 +148,8 @@ function searchClosestFile(nameOrNames, options) {
 @param {SearchClosestOptions} [options]
 @returns {ReturnType<DirectorySearcher['search']>}
 */
-function searchClosestDirectory(nameOrNames, options) {
+function searchDirectory(nameOrNames, options) {
   return searchClosest(nameOrNames, {...options, Searcher: DirectorySearcher})
 }
 
-export {
-  DirectorySearcher,
-  FileSearcher,
-  searchClosestDirectory,
-  searchClosestFile,
-}
+export {DirectorySearcher, FileSearcher, searchDirectory, searchFile}
