@@ -101,7 +101,5 @@ typings/
 # project ignore files
 .deleted/
 dist/
-fixtures/link-to-directory
-fixtures/link-to-file
-/searcher.d.ts
 /index.d.ts
+/fixtures

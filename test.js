@@ -1,43 +1,15 @@
-import fs from 'node:fs/promises'
-import os from 'node:os'
+import path from 'node:path'
 import url from 'node:url'
 import test from 'ava'
 import {searchClosestDirectory, searchClosestFile} from './index.js'
+import createFixtures from './scripts/create-fixtures.js'
 
-const fixtures = new URL('./fixtures/', import.meta.url)
+const {directory: fixtures, supportSymlink} = await createFixtures()
+const relativeFixturesPath = path.relative(
+  import.meta.dirname,
+  url.fileURLToPath(fixtures),
+)
 const getPath = (path) => url.fileURLToPath(new URL(path, fixtures))
-
-await Promise.allSettled([
-  fs.unlink(new URL('./link-to-a-file', fixtures)),
-  fs.unlink(new URL('./link-to-a-directory', fixtures)),
-])
-
-let supportSymlink = true
-try {
-  await Promise.all([
-    fs.symlink(
-      new URL('./a-file', fixtures),
-      new URL('./link-to-a-file', fixtures),
-    ),
-    fs.symlink(
-      new URL('./a-directory', fixtures),
-      new URL('./link-to-a-directory', fixtures),
-    ),
-  ])
-} catch (error) {
-  if (
-    os.platform === 'win32' &&
-    error.code === 'EPERM' &&
-    error.syscall === 'symlink'
-  ) {
-    console.warn(
-      "'symbolic links' tests can not run on this machine, active 'Developer Mode' may help.\nSee https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development#activate-developer-mode",
-    )
-    supportSymlink = false
-  } else {
-    throw error
-  }
-}
 
 test('main', async (t) => {
   // Files
@@ -168,7 +140,7 @@ test('Predicate', async (t) => {
 })
 
 const testSymlink = supportSymlink ? test : test.skip
-testSymlink.skip('Options', async (t) => {
+testSymlink('Options', async (t) => {
   // Files
   t.is(
     await searchClosestFile(['link-to-a-file'], {
@@ -273,7 +245,7 @@ test('Should accept url, absolute path, or relative path', async (t) => {
     getPath('a-file'),
   )
   t.is(
-    await searchClosestFile('a-file', {cwd: './fixtures/'}),
+    await searchClosestFile('a-file', {cwd: relativeFixturesPath}),
     getPath('a-file'),
   )
 
@@ -289,7 +261,7 @@ test('Should accept url, absolute path, or relative path', async (t) => {
     getPath('a-directory'),
   )
   t.is(
-    await searchClosestDirectory('a-directory', {cwd: './fixtures/'}),
+    await searchClosestDirectory('a-directory', {cwd: relativeFixturesPath}),
     getPath('a-directory'),
   )
 })
@@ -297,17 +269,13 @@ test('Should accept url, absolute path, or relative path', async (t) => {
 test('Should work for deep names too', async (t) => {
   // Files
   t.is(
-    await searchClosestFile('fixtures/a-file', {
-      cwd: new URL('../', fixtures.href),
-    }),
-    getPath('a-file'),
+    await searchClosestFile('a-directory/file', {cwd: fixtures}),
+    getPath('a-directory/file'),
   )
 
   // Directories
   t.is(
-    await searchClosestDirectory('fixtures/a-directory', {
-      cwd: new URL('../', fixtures.href),
-    }),
-    getPath('a-directory'),
+    await searchClosestDirectory('a-directory/directory', {cwd: fixtures}),
+    getPath('a-directory/directory'),
   )
 })
