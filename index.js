@@ -1,4 +1,3 @@
-import process from 'node:process'
 import {findDirectory, findFile} from 'find-in-directory'
 import iterateDirectoryUp from 'iterate-directory-up'
 
@@ -19,12 +18,6 @@ import iterateDirectoryUp from 'iterate-directory-up'
 }} SearchOptions
 
 @typedef {
-  SearcherOptions & {
-    searchInDirectory: typeof findFile | typeof findDirectory
-  }
-} GenericSearcherOptions
-
-@typedef {
   Omit<SearcherOptions, 'cache'> & {
     cwd?: OptionalUrlOrPath,
   }
@@ -37,20 +30,22 @@ class Searcher {
   #stopDirectory
   #cache
   #resultCache = new Map()
-  #searchInDirectory
+  #searchWithoutCache
+  /**
+  @protected
+  @type {typeof findFile | typeof findDirectory}
+  */
+  findInDirectory
 
   /**
   @param {NameOrNames} nameOrNames
-  @param {GenericSearcherOptions} options
+  @param {SearcherOptions} [options]
   */
-  constructor(
-    nameOrNames,
-    {allowSymlinks, filter, stopDirectory, searchInDirectory, cache},
-  ) {
+  constructor(nameOrNames, {allowSymlinks, filter, stopDirectory, cache} = {}) {
     this.#stopDirectory = stopDirectory
     this.#cache = cache ?? true
-    this.#searchInDirectory = (directory) =>
-      searchInDirectory(directory, nameOrNames, filter, {allowSymlinks})
+    this.#searchWithoutCache = (directory) =>
+      this.findInDirectory(directory, nameOrNames, filter, {allowSymlinks})
   }
 
   #search(directory, cache = true) {
@@ -58,7 +53,7 @@ class Searcher {
 
     // Always cache the result, so we can use it when `shouldCache` is set to `true`
     if (!cache || !resultCache.has(directory)) {
-      resultCache.set(directory, this.#searchInDirectory(directory))
+      resultCache.set(directory, this.#searchWithoutCache(directory))
     }
 
     return resultCache.get(directory)
@@ -72,7 +67,6 @@ class Searcher {
   @returns {SearchResult}
   */
   async search(startDirectory, options) {
-    startDirectory ??= process.cwd()
     for (const directory of iterateDirectoryUp(
       startDirectory,
       this.#stopDirectory,
@@ -102,23 +96,13 @@ class Searcher {
 // Subclass for better tree-shaking
 
 class FileSearcher extends Searcher {
-  /**
-  @param {NameOrNames} nameOrNames
-  @param {SearcherOptions} [options]
-  */
-  constructor(nameOrNames, options) {
-    super(nameOrNames, {...options, searchInDirectory: findFile})
-  }
+  /** @protected */
+  findInDirectory = findFile
 }
 
 class DirectorySearcher extends Searcher {
-  /**
-  @param {NameOrNames} nameOrNames
-  @param {SearcherOptions} [options]
-  */
-  constructor(nameOrNames, options) {
-    super(nameOrNames, {...options, searchInDirectory: findDirectory})
-  }
+  /** @protected */
+  findInDirectory = findDirectory
 }
 
 /**
