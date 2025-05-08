@@ -163,7 +163,7 @@ Whether symlinks should be matched.
 
 ##### `options.filter` (searchClosest)
 
-Type: `(fileOrDirectory: {name: string, path: string}) => Promise<boolean>`
+Type: `(fileOrDirectory: {name: string, path: string, stats: fs.Stats}) => Promise<boolean>`
 
 To exclude specific file or directory.
 
