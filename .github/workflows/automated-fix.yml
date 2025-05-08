@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   fix:
-    if: github.repository == 'fisker/undefined'
+    if: github.repository == 'fisker/search-closest'
     name: Run automated fix
     permissions: {}
     uses: fisker/shared-workflows/.github/workflows/automated-fix.yml@main

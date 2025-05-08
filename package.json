@@ -2,12 +2,12 @@
   "name": "search-closest",
   "version": "1.0.0",
   "description": "Find closest file or directory by names.",
-  "homepage": "https://github.com/fisker/undefined#readme",
+  "homepage": "https://github.com/fisker/search-closest#readme",
   "bugs": {
-    "url": "https://github.com/fisker/undefined/issues"
+    "url": "https://github.com/fisker/search-closest/issues"
   },
-  "repository": "fisker/undefined",
-  "funding": "https://github.com/fisker/undefined?sponsor=1",
+  "repository": "fisker/search-closest",
+  "funding": "https://github.com/fisker/search-closest?sponsor=1",
   "license": "MIT",
   "author": {
     "name": "fisker Cheung",
