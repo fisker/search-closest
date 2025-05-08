@@ -1,6 +1,7 @@
+import assert from 'node:assert/strict'
 import path from 'node:path'
+import test from 'node:test'
 import url from 'node:url'
-import test from 'ava'
 import {
   DirectorySearcher,
   FileSearcher,
@@ -16,45 +17,45 @@ const relativeFixturesPath = path.relative(
 )
 const getPath = (path) => url.fileURLToPath(new URL(path, fixtures))
 
-test('main', async (t) => {
+test('main', async () => {
   // Files
-  t.is(await searchFile('a-file', {cwd: fixtures}), getPath('a-file'))
-  t.is(await searchFile(['a-file'], {cwd: fixtures}), getPath('a-file'))
-  t.is(await searchFile(['non-exits-file'], {cwd: fixtures}), undefined)
+  assert.equal(await searchFile('a-file', {cwd: fixtures}), getPath('a-file'))
+  assert.equal(await searchFile(['a-file'], {cwd: fixtures}), getPath('a-file'))
+  assert.equal(await searchFile(['non-exits-file'], {cwd: fixtures}), undefined)
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory('a-directory', {cwd: fixtures}),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['a-directory'], {cwd: fixtures}),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['non-exits-directory'], {cwd: fixtures}),
     undefined,
   )
 })
 
-test('Should only match exists files/directories', async (t) => {
+test('Should only match exists files/directories', async () => {
   // Files
-  t.is(
+  assert.equal(
     await searchFile(['a-file', 'non-exits-file'], {cwd: fixtures}),
     getPath('a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['non-exits-file', 'a-file'], {cwd: fixtures}),
     getPath('a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['non-exits-file', 'a-file'], {
       cwd: fixtures,
       filter: () => true,
     }),
     getPath('a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['non-exits-file', 'a-directory', 'a-file'], {
       cwd: fixtures,
       filter: () => true,
@@ -63,26 +64,26 @@ test('Should only match exists files/directories', async (t) => {
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory(['a-directory', 'non-exits-directory'], {
       cwd: fixtures,
     }),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['non-exits-directory', 'a-directory'], {
       cwd: fixtures,
     }),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['non-exits-directory', 'a-directory'], {
       cwd: fixtures,
       filter: () => true,
     }),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['non-exits-directory', 'a-file', 'a-directory'], {
       cwd: fixtures,
       filter: () => true,
@@ -91,15 +92,15 @@ test('Should only match exists files/directories', async (t) => {
   )
 })
 
-test('Order matters', async (t) => {
+test('Order matters', async () => {
   // Files
-  t.is(
+  assert.equal(
     await searchFile(['a-file', 'b-file'], {
       cwd: fixtures,
     }),
     getPath('a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['b-file', 'a-file'], {
       cwd: fixtures,
     }),
@@ -107,13 +108,13 @@ test('Order matters', async (t) => {
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory(['a-directory', 'b-directory'], {
       cwd: fixtures,
     }),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['b-directory', 'a-directory'], {
       cwd: fixtures,
     }),
@@ -121,9 +122,9 @@ test('Order matters', async (t) => {
   )
 })
 
-test('Predicate', async (t) => {
+test('Predicate', async () => {
   // Files
-  t.is(
+  assert.equal(
     await searchFile(['b-file', 'a-file'], {
       cwd: fixtures,
       filter: ({name}) => name === 'a-file',
@@ -132,7 +133,7 @@ test('Predicate', async (t) => {
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory(['b-directory', 'a-directory'], {
       cwd: fixtures,
       filter: ({name}) => name === 'a-directory',
@@ -142,23 +143,23 @@ test('Predicate', async (t) => {
 })
 
 const testSymlink = supportSymlink ? test : test.skip
-testSymlink('Options', async (t) => {
+testSymlink('Options', async () => {
   // Files
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
   )
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       filter: () => true,
@@ -166,7 +167,7 @@ testSymlink('Options', async (t) => {
     }),
     getPath('link-to-a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       filter: () => true,
@@ -174,14 +175,14 @@ testSymlink('Options', async (t) => {
     }),
     undefined,
   )
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile(['link-to-a-file'], {
       cwd: fixtures,
       allowSymlinks: false,
@@ -190,21 +191,21 @@ testSymlink('Options', async (t) => {
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       allowSymlinks: false,
     }),
     undefined,
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       filter: () => true,
@@ -212,7 +213,7 @@ testSymlink('Options', async (t) => {
     }),
     getPath('link-to-a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       filter: () => true,
@@ -220,14 +221,14 @@ testSymlink('Options', async (t) => {
     }),
     undefined,
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       allowSymlinks: true,
     }),
     getPath('link-to-a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory(['link-to-a-directory'], {
       cwd: fixtures,
       allowSymlinks: false,
@@ -236,44 +237,47 @@ testSymlink('Options', async (t) => {
   )
 })
 
-test('Should accept url, absolute path, or relative path', async (t) => {
+test('Should accept url, absolute path, or relative path', async () => {
   // Files
-  t.is(await searchFile('a-file', {cwd: fixtures.href}), getPath('a-file'))
-  t.is(
+  assert.equal(
+    await searchFile('a-file', {cwd: fixtures.href}),
+    getPath('a-file'),
+  )
+  assert.equal(
     await searchFile('a-file', {cwd: url.fileURLToPath(fixtures)}),
     getPath('a-file'),
   )
-  t.is(
+  assert.equal(
     await searchFile('a-file', {cwd: relativeFixturesPath}),
     getPath('a-file'),
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory('a-directory', {cwd: fixtures.href}),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory('a-directory', {
       cwd: url.fileURLToPath(fixtures),
     }),
     getPath('a-directory'),
   )
-  t.is(
+  assert.equal(
     await searchDirectory('a-directory', {cwd: relativeFixturesPath}),
     getPath('a-directory'),
   )
 })
 
-test('Should work for deep names too', async (t) => {
+test('Should work for deep names too', async () => {
   // Files
-  t.is(
+  assert.equal(
     await searchFile('a-directory/file-in-a-directory', {cwd: fixtures}),
     getPath('a-directory/file-in-a-directory'),
   )
 
   // Directories
-  t.is(
+  assert.equal(
     await searchDirectory('a-directory/directory-in-a-directory', {
       cwd: fixtures,
     }),
@@ -281,20 +285,20 @@ test('Should work for deep names too', async (t) => {
   )
 })
 
-test('Searcher', async (t) => {
+test('Searcher', async () => {
   const fileSearcher = new FileSearcher('file-in-root')
   const directorySearcher = new DirectorySearcher('directory-in-root')
 
-  t.is(
+  assert.equal(
     await fileSearcher.search(fixtures, {cache: false}),
     url.fileURLToPath(new URL('./file-in-root', FIXTURES_DIRECTORY)),
   )
 
-  t.is(
+  assert.equal(
     await directorySearcher.search(fixtures),
     url.fileURLToPath(new URL('./directory-in-root', FIXTURES_DIRECTORY)),
   )
 
-  t.is(fileSearcher.clearCache(), undefined)
-  t.is(directorySearcher.clearCache(), undefined)
+  assert.equal(fileSearcher.clearCache(), undefined)
+  assert.equal(directorySearcher.clearCache(), undefined)
 })
