@@ -9,6 +9,7 @@ import iterateDirectoryUp from 'iterate-directory-up'
 @import {
   FindOptions,
   NameOrNames,
+  Filter,
 } from 'find-in-directory'
 
 @typedef {Parameters<typeof iterateDirectoryUp>[1]} OptionalUrlOrPath
@@ -19,6 +20,10 @@ import iterateDirectoryUp from 'iterate-directory-up'
   stopDirectory?: OptionalUrlOrPath,
   cache?: boolean,
 }} SearcherOptions
+
+@typedef {Filter | SearcherOptions} FilterOrOptions
+
+@typedef {Omit<SearcherOptions, "filter">} OptionsWithoutFilter
 
 @typedef {{
   cache?: boolean,
@@ -46,11 +51,21 @@ class SearcherInternal {
 
   /**
   @param {NameOrNames} nameOrNames
-  @param {SearcherOptions} [options]
+  @param {FilterOrOptions} [filterOrOptions]
+  @param {OptionsWithoutFilter} [optionsWithoutFilter]
   */
-  constructor(nameOrNames, {allowSymlinks, filter, stopDirectory, cache} = {}) {
+  constructor(nameOrNames, filterOrOptions, optionsWithoutFilter) {
+    const {
+      allowSymlinks,
+      filter,
+      stopDirectory,
+      cache = true,
+    } = typeof filterOrOptions === 'function'
+      ? {...optionsWithoutFilter, filter: filterOrOptions}
+      : {...filterOrOptions}
+
     this.#stopDirectory = stopDirectory
-    this.#cache = cache ?? true
+    this.#cache = cache
     /**
     @param {string} directory
     */
