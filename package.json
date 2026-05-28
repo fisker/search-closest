@@ -1,6 +1,6 @@
 {
   "name": "search-closest",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Find closest file or directory by names.",
   "homepage": "https://github.com/fisker/search-closest#readme",
   "bugs": {
