@@ -76,6 +76,35 @@ test('main', async () => {
     await searchClosest(['non-exits-directory'], {cwd: fixtures}),
     undefined,
   )
+
+  // Object type
+  assert.equal(
+    await searchClosest(
+      [
+        {name: 'a-directory', type: 'directory'},
+        {name: 'a-file', type: 'file'},
+      ],
+      {cwd: fixtures},
+    ),
+    getPath('a-directory'),
+  )
+  assert.equal(
+    await searchClosest(
+      [{name: 'a-directory'}, {name: 'a-file', type: 'file'}],
+      {cwd: fixtures},
+    ),
+    getPath('a-directory'),
+  )
+  assert.equal(
+    await searchClosest(
+      [
+        {name: 'a-directory', type: 'file'},
+        {name: 'a-file', type: 'file'},
+      ],
+      {cwd: fixtures},
+    ),
+    getPath('a-file'),
+  )
 })
 
 test('Should only match exists files/directories', async () => {
