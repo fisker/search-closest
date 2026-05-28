@@ -21,9 +21,9 @@ import iterateDirectoryUp from 'iterate-directory-up'
   cache?: boolean,
 }} SearcherOptions
 
-@typedef {Filter | SearcherOptions} FilterOrOptions
+@typedef {Filter | SearcherOptions} FilterOrSearcherOptions
 
-@typedef {Omit<SearcherOptions, "filter">} OptionsWithoutFilter
+@typedef {Omit<SearcherOptions, "filter">} SearcherOptionsWithoutFilter
 
 @typedef {{
   cache?: boolean,
@@ -34,6 +34,10 @@ import iterateDirectoryUp from 'iterate-directory-up'
     cwd?: OptionalUrlOrPath,
   }
 } SearchClosestOptions
+
+@typedef {Filter | SearchClosestOptions} FilterOrSearchClosestOptions
+
+@typedef {Omit<SearchClosestOptions, "filter">} SearchClosestOptionsWithoutFilter
 
 @typedef {Promise<string | void>} SearchResult
 */
@@ -51,8 +55,8 @@ class SearcherInternal {
 
   /**
   @param {NameOrNames} nameOrNames
-  @param {FilterOrOptions} [filterOrOptions]
-  @param {OptionsWithoutFilter} [optionsWithoutFilter]
+  @param {FilterOrSearcherOptions} [filterOrOptions]
+  @param {SearcherOptionsWithoutFilter} [optionsWithoutFilter]
   */
   constructor(nameOrNames, filterOrOptions, optionsWithoutFilter) {
     const {
@@ -141,13 +145,20 @@ class Searcher extends SearcherInternal {
 /**
 @param {typeof FileSearcher | typeof DirectorySearcher | typeof Searcher} Searcher
 @param {NameOrNames} nameOrNames
-@param {SearchClosestOptions} [options]
+@param {FilterOrSearchClosestOptions} [filterOrOptions]
+@param {SearchClosestOptionsWithoutFilter} [optionsWithoutFilter]
 */
 function searchClosestInternal(
   Searcher,
   nameOrNames,
-  {cwd, allowSymlinks, filter, stopDirectory} = {},
+  filterOrOptions,
+  optionsWithoutFilter,
 ) {
+  const {cwd, allowSymlinks, filter, stopDirectory} =
+    typeof filterOrOptions === 'function'
+      ? {...optionsWithoutFilter, filter: filterOrOptions}
+      : {...filterOrOptions}
+
   return new Searcher(nameOrNames, {
     allowSymlinks,
     filter,
@@ -158,29 +169,51 @@ function searchClosestInternal(
 
 /**
 @param {NameOrNames} nameOrNames
-@param {SearchClosestOptions} [options]
+@param {FilterOrSearchClosestOptions} [filterOrOptions]
+@param {SearchClosestOptionsWithoutFilter} [optionsWithoutFilter]
 @returns {SearchResult}
 */
-function searchClosestFile(nameOrNames, options) {
-  return searchClosestInternal(FileSearcher, nameOrNames, options)
+function searchClosestFile(nameOrNames, filterOrOptions, optionsWithoutFilter) {
+  return searchClosestInternal(
+    FileSearcher,
+    nameOrNames,
+    filterOrOptions,
+    optionsWithoutFilter,
+  )
 }
 
 /**
 @param {NameOrNames} nameOrNames
-@param {SearchClosestOptions} [options]
+@param {FilterOrSearchClosestOptions} [filterOrOptions]
+@param {SearchClosestOptionsWithoutFilter} [optionsWithoutFilter]
 @returns {SearchResult}
 */
-function searchClosestDirectory(nameOrNames, options) {
-  return searchClosestInternal(DirectorySearcher, nameOrNames, options)
+function searchClosestDirectory(
+  nameOrNames,
+  filterOrOptions,
+  optionsWithoutFilter,
+) {
+  return searchClosestInternal(
+    DirectorySearcher,
+    nameOrNames,
+    filterOrOptions,
+    optionsWithoutFilter,
+  )
 }
 
 /**
 @param {NameOrNames} nameOrNames
-@param {SearchClosestOptions} [options]
+@param {FilterOrSearchClosestOptions} [filterOrOptions]
+@param {SearchClosestOptionsWithoutFilter} [optionsWithoutFilter]
 @returns {SearchResult}
 */
-function searchClosest(nameOrNames, options) {
-  return searchClosestInternal(Searcher, nameOrNames, options)
+function searchClosest(nameOrNames, filterOrOptions, optionsWithoutFilter) {
+  return searchClosestInternal(
+    Searcher,
+    nameOrNames,
+    filterOrOptions,
+    optionsWithoutFilter,
+  )
 }
 
 export {

@@ -39,11 +39,12 @@ const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
 
-const searcher = new Searcher(['yarn.lock', '.yarn'], {
-  filter: ({name, stats}) =>
+const searcher = new Searcher(
+  ['yarn.lock', '.yarn'],
+  ({name, stats}) =>
     (name === 'yarn.lock' && stats.isFile()) ||
     (name === '.yarn' && stats.isDirectory()),
-})
+)
 console.log(await searcher.search())
 // "/path/to/yarn.lock"
 
@@ -54,18 +55,17 @@ console.log(await searchClosestDirectory(['.git']))
 // "/path/to/.git"
 
 console.log(
-  await searchClosest(['yarn.lock', '.yarn'], {
-    filter: ({name, stats}) =>
+  await searchClosest(
+    ['yarn.lock', '.yarn'],
+    ({name, stats}) =>
       (name === 'yarn.lock' && stats.isFile()) ||
       (name === '.yarn' && stats.isDirectory()),
-  }),
+  ),
 )
 // "/path/to/yarn.lock"
 ```
 
 ## API
-
-### `new {File,Directory,}Searcher(nameOrNames, options?)`
 
 ```js
 import {FileSearcher, DirectorySearcher, Searcher} from 'search-closest'
@@ -78,46 +78,59 @@ const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
 
-const searcher = new Searcher(['yarn.lock', '.yarn'], {
-  filter: ({name, stats}) =>
+const searcher = new Searcher(
+  ['yarn.lock', '.yarn'],
+  ({name, stats}) =>
     (name === 'yarn.lock' && stats.isFile()) ||
     (name === '.yarn' && stats.isDirectory()),
-})
+)
 console.log(await searcher.search())
 // "/path/to/yarn.lock"
 ```
 
-#### `nameOrNames` (Searcher)
+## Signatures (Searcher)
+
+### `new {File,Directory,}Searcher(nameOrNames: NameOrNames)`
+
+### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, options: Options)`
+
+### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, filter: Options["filter"])`
+
+### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, filter: Options["filter"], options: Omit<Options, "filter">)`
+
+## Types (Searcher)
+
+#### `NameOrNames` (Searcher)
 
 Type: `string[] | string`
 
 The file or directory name or names to find.
 
-#### `options` (Searcher)
+#### `Options` (Searcher)
 
 Type: `object`
 
-##### `options.allowSymlinks` (Searcher)
+##### `Options.allowSymlinks` (Searcher)
 
 Type: `boolean`\
 Default: `true`
 
 Whether symlinks should be matched.
 
-##### `options.filter` (Searcher)
+##### `Options.filter` (Searcher)
 
 Type: `(fileOrDirectory: {name: string, path: string, stats: fs.Stats}) => Promise<boolean>`
 
 To exclude specific file or directory.
 
-##### `options.stopDirectory` (Searcher)
+##### `Options.stopDirectory` (Searcher)
 
 Type: `URL | string`\
 Default: Root directory
 
 The last directory to search before stopping.
 
-##### `options.cache` (Searcher)
+##### `Options.cache` (Searcher)
 
 Type: `boolean`
 Default: `true`
@@ -168,46 +181,59 @@ console.log(await searchDirectory(['.git']))
 // "/path/to/.git"
 
 console.log(
-  await searchClosest(['yarn.lock', '.yarn'], {
-    filter: ({name, stats}) =>
+  await searchClosest(
+    ['yarn.lock', '.yarn'],
+    ({name, stats}) =>
       (name === 'yarn.lock' && stats.isFile()) ||
       (name === '.yarn' && stats.isDirectory()),
-  }),
+  ),
 )
 // "/path/to/yarn.lock"
 ```
 
-#### `nameOrNames` (searchClosest)
+## Signatures (searchClosest)
+
+### `searchClosest{File,Directory,}(nameOrNames: NameOrNames)`
+
+### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, options: Options)`
+
+### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, filter: Options["filter"])`
+
+### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, filter: Options["filter"], options: Omit<Options, "filter">)`
+
+## Types (searchClosest)
+
+#### `NameOrNames` (searchClosest)
 
 Type: `string[] | string`
 
 The file or directory name or names to find.
 
-#### `options` (searchClosest)
+#### `Options` (searchClosest)
 
 Type: `object`
 
-#### `options.cwd` (searchClosest)
+#### `Options.cwd` (searchClosest)
 
 Type: `URL | string`\
 Default: `process.cwd()`
 
 The directory start to search.
 
-##### `options.allowSymlinks` (searchClosest)
+##### `Options.allowSymlinks` (searchClosest)
 
 Type: `boolean`\
 Default: `true`
 
 Whether symlinks should be matched.
 
-##### `options.filter` (searchClosest)
+##### `Options.filter` (searchClosest)
 
 Type: `(fileOrDirectory: {name: string, path: string, stats: fs.Stats}) => Promise<boolean>`
 
 To exclude specific file or directory.
 
-##### `options.stopDirectory` (searchClosest)
+##### `Options.stopDirectory` (searchClosest)
 
 Type: `URL | string`\
 Default: Root directory

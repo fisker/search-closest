@@ -57,17 +57,19 @@ test('main', async () => {
     getPath('a-directory'),
   )
   assert.equal(
-    await searchClosest(['a-directory', 'a-file'], {
-      cwd: fixtures,
-      filter: ({stats}) => stats.isDirectory(),
-    }),
+    await searchClosest(
+      ['a-directory', 'a-file'],
+      ({stats}) => stats.isDirectory(),
+      {cwd: fixtures},
+    ),
     getPath('a-directory'),
   )
   assert.equal(
-    await searchClosest(['a-directory', 'a-file'], {
-      cwd: fixtures,
-      filter: ({stats}) => stats.isFile(),
-    }),
+    await searchClosest(
+      ['a-directory', 'a-file'],
+      ({stats}) => stats.isFile(),
+      {cwd: fixtures},
+    ),
     getPath('a-file'),
   )
   assert.equal(
