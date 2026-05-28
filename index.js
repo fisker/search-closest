@@ -71,7 +71,6 @@ class Searcher {
       startDirectory,
       this.#stopDirectory,
     )) {
-      // eslint-disable-next-line no-await-in-loop
       const result = await this.#search(
         directory,
         options?.cache ?? this.#cache,
