@@ -1,2 +1,2 @@
-export * from './searchers.js'
-export * from './search-functions.js'
+export {FileSearcher, DirectorySearcher, Searcher} from './searchers.js'
+export {searchFile, searchDirectory, searchClosest} from './search-functions.js'
