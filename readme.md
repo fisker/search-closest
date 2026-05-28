@@ -110,7 +110,7 @@ The file or directory name or names to find.
 
 Type: `object`
 
-##### `Options.allowSymlinks` (Searcher)
+#### `Options.allowSymlinks` (Searcher)
 
 Type: `boolean`\
 Default: `true`
