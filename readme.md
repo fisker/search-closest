@@ -100,13 +100,13 @@ console.log(await searcher.search())
 
 ## Types (Searcher)
 
-#### `NameOrNames` (Searcher)
+### `NameOrNames` (Searcher)
 
 Type: `string[] | string`
 
 The file or directory name or names to find.
 
-#### `Options` (Searcher)
+### `Options` (Searcher)
 
 Type: `object`
 
@@ -203,13 +203,13 @@ console.log(
 
 ## Types (searchClosest)
 
-#### `NameOrNames` (searchClosest)
+### `NameOrNames` (searchClosest)
 
 Type: `string[] | string`
 
 The file or directory name or names to find.
 
-#### `Options` (searchClosest)
+### `Options` (searchClosest)
 
 Type: `object`
 
