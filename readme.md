@@ -78,33 +78,55 @@ const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
 
-const searcher = new Searcher(
-  ['yarn.lock', '.yarn'],
-  ({name, stats}) =>
-    (name === 'yarn.lock' && stats.isFile()) ||
-    (name === '.yarn' && stats.isDirectory()),
-)
+const searcher = new Searcher([
+  {name: 'yarn.lock', type: 'file'},
+  {name: '.yarn', type: 'directory'},
+])
 console.log(await searcher.search())
 // "/path/to/yarn.lock"
 ```
 
 ## Signatures (Searcher)
 
-### `new {File,Directory,}Searcher(nameOrNames: NameOrNames)`
+### `new {File,Directory,}Searcher(targetOrTargets: TargetOrTargets)`
 
-### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, options: Options)`
+### `new {File,Directory,}Searcher(targetOrTargets: TargetOrTargets, options: Options)`
 
-### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, filter: Options["filter"])`
+### `new {File,Directory,}Searcher(targetOrTargets: TargetOrTargets, filter: Options["filter"])`
 
-### `new {File,Directory,}Searcher(nameOrNames: NameOrNames, filter: Options["filter"], options: Omit<Options, "filter">)`
+### `new {File,Directory,}Searcher(targetOrTargets: TargetOrTargets, filter: Options["filter"], options: Omit<Options, "filter">)`
 
 ## Types (Searcher)
 
-### `NameOrNames` (Searcher)
+### `TargetOrTargets` (Searcher)
 
-Type: `string[] | string`
+The files or directories to find.
 
-The file or directory name or names to find.
+Type: `Target | Target[]`
+
+#### `Target` (Searcher)
+
+The files or directories to find.
+
+Type: `string | {name: string, type?: 'file' | 'directory', filter?: Options["filter"]}`
+
+#### `Target["type"]` (Searcher)
+
+The file or directory type looking for.
+
+```js
+import fs from 'node:fs/promises'
+import {Searcher} from 'search-closest'
+
+const searcher = new Searcher([
+  {name: 'yarn.lock', type: 'file'},
+  {name: '.yarn', type: 'directory'},
+])
+console.log(await searcher.search())
+// "/path/to/yarn.lock"
+```
+
+_`Target.type` is ignored in `new FileSearcher()` and `new DirectorySearcher()`, only works in `new Searcher()`_
 
 ### `Options` (Searcher)
 
@@ -161,7 +183,7 @@ Whether the result cache should be used.
 
 Clear cached search result.
 
-### `searchClosest{File,Directory,}(nameOrNames, options?)`
+### `searchClosest{File,Directory,}()`
 
 > [!Warning]
 >
@@ -181,33 +203,56 @@ console.log(await searchDirectory(['.git']))
 // "/path/to/.git"
 
 console.log(
-  await searchClosest(
-    ['yarn.lock', '.yarn'],
-    ({name, stats}) =>
-      (name === 'yarn.lock' && stats.isFile()) ||
-      (name === '.yarn' && stats.isDirectory()),
-  ),
+  await searchClosest([
+    {name: 'yarn.lock', type: 'file'},
+    {name: '.yarn', type: 'directory'},
+  ]),
 )
 // "/path/to/yarn.lock"
 ```
 
 ## Signatures (searchClosest)
 
-### `searchClosest{File,Directory,}(nameOrNames: NameOrNames)`
+### `searchClosest{File,Directory,}(targetOrTargets: TargetOrTargets)`
 
-### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, options: Options)`
+### `searchClosest{File,Directory,}(targetOrTargets: TargetOrTargets, options: Options)`
 
-### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, filter: Options["filter"])`
+### `searchClosest{File,Directory,}(targetOrTargets: TargetOrTargets, filter: Options["filter"])`
 
-### `searchClosest{File,Directory,}(nameOrNames: NameOrNames, filter: Options["filter"], options: Omit<Options, "filter">)`
+### `searchClosest{File,Directory,}(targetOrTargets: TargetOrTargets, filter: Options["filter"], options: Omit<Options, "filter">)`
 
 ## Types (searchClosest)
 
-### `NameOrNames` (searchClosest)
+### `TargetOrTargets` (searchClosest)
 
-Type: `string[] | string`
+The files or directories to find.
 
-The file or directory name or names to find.
+Type: `Target | Target[]`
+
+#### `Target` (searchClosest)
+
+The files or directories to find.
+
+Type: `string | {name: string, type?: 'file' | 'directory', filter?: Options["filter"]}`
+
+#### `Target["type"]` (searchClosest)
+
+The file or directory type looking for.
+
+```js
+import fs from 'node:fs/promises'
+import {searchClosest} from 'search-closest'
+
+console.log(
+  await searchClosest([
+    {name: 'yarn.lock', type: 'file'},
+    {name: '.yarn', type: 'directory'},
+  ]),
+)
+// "/path/to/yarn.lock"
+```
+
+_`Target.type` is ignored in `searchClosestFile()` and `searchClosestDirectory()`, only works in `searchClosest()`_
 
 ### `Options` (searchClosest)
 
