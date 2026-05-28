@@ -19,6 +19,9 @@ for (const Searcher of [FileSearcher, DirectorySearcher, AnySearcher]) {
 
   // `options`
   expectType<string | void>(await new Searcher('name', {}).search())
+  expectType<string | void>(await new Searcher('name', undefined).search())
+  expectType<string | void>(await new Searcher('name', () => true).search())
+  expectType<string | void>(await new Searcher('name', () => true, {}).search())
 
   // `options.allowSymlinks`
   expectType<string | void>(
@@ -86,6 +89,9 @@ for (const search of [
 
   // `options`
   expectType<string | void>(await search('name', {}))
+  expectType<string | void>(await search('name', undefined))
+  expectType<string | void>(await search('name', () => true))
+  expectType<string | void>(await search('name', () => true, {}))
 
   // `options.allowSymlinks`
   expectType<string | void>(await search('name', {allowSymlinks: true}))
