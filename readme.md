@@ -25,8 +25,10 @@ yarn add search-closest
 import {
   FileSearcher,
   DirectorySearcher,
-  searchFile,
-  searchDirectory,
+  Searcher,
+  searchClosestFile,
+  searchClosestDirectory,
+  searchClosest,
 } from 'search-closest'
 
 const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
@@ -37,19 +39,36 @@ const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
 
-console.log(await searchFile(['config.json', 'config.yaml']))
+const searcher = new Searcher(['yarn.lock', '.yarn'], {
+  filter: ({name, stats}) =>
+    (name === 'yarn.lock' && stats.isFile()) ||
+    (name === '.yarn' && stats.isDirectory()),
+})
+console.log(await searcher.search())
+// "/path/to/yarn.lock"
+
+console.log(await searchClosestFile(['config.json', 'config.yaml']))
 // "/path/to/config.json"
 
-console.log(await searchDirectory(['.git']))
+console.log(await searchClosestDirectory(['.git']))
 // "/path/to/.git"
+
+console.log(
+  await searchClosest(['yarn.lock', '.yarn'], {
+    filter: ({name, stats}) =>
+      (name === 'yarn.lock' && stats.isFile()) ||
+      (name === '.yarn' && stats.isDirectory()),
+  }),
+)
+// "/path/to/yarn.lock"
 ```
 
 ## API
 
-### `new {File,Directory}Searcher(nameOrNames, options?)`
+### `new {File,Directory,}Searcher(nameOrNames, options?)`
 
 ```js
-import {FileSearcher, DirectorySearcher} from 'search-closest'
+import {FileSearcher, DirectorySearcher, Searcher} from 'search-closest'
 
 const fileSearcher = new FileSearcher(['config.json', 'config.yaml'])
 console.log(await fileSearcher.search())
@@ -58,6 +77,14 @@ console.log(await fileSearcher.search())
 const directorySearcher = new DirectorySearcher(['.git'])
 console.log(await directorySearcher.search())
 // "/path/to/.git"
+
+const searcher = new Searcher(['yarn.lock', '.yarn'], {
+  filter: ({name, stats}) =>
+    (name === 'yarn.lock' && stats.isFile()) ||
+    (name === '.yarn' && stats.isDirectory()),
+})
+console.log(await searcher.search())
+// "/path/to/yarn.lock"
 ```
 
 #### `nameOrNames` (Searcher)
@@ -79,7 +106,7 @@ Whether symlinks should be matched.
 
 ##### `options.filter` (Searcher)
 
-Type: `(fileOrDirectory: {name: string, path: string}) => Promise<boolean>`
+Type: `(fileOrDirectory: {name: string, path: string, stats: fs.Stats}) => Promise<boolean>`
 
 To exclude specific file or directory.
 
@@ -97,7 +124,7 @@ Default: `true`
 
 Whether the search result should be cached.
 
-### `{File,Directory}Searcher#search(startDirectory?, options)`
+### `{File,Directory,}Searcher#search(startDirectory?, options)`
 
 #### `startDirectory` (Searcher#search)
 
@@ -117,24 +144,37 @@ Default: `true`
 
 Whether the result cache should be used.
 
-### `{File,Directory}Searcher#clearCache()`
+### `{File,Directory,}Searcher#clearCache()`
 
 Clear cached search result.
 
-### `search{File,Directory}(nameOrNames, options?)`
+### `searchClosest{File,Directory,}(nameOrNames, options?)`
 
 > [!Warning]
 >
-> The search result won't be cached, use the `FileSearcher` or `DirectorySearcher` if you want more efficient functionality.
+> The search result won't be cached, use the `FileSearcher`, `DirectorySearcher`, or `Searcher` if you want more efficient functionality.
 
 ```js
-import {searchFile, searchDirectory} from 'search-closest'
+import {
+  searchClosestFile,
+  searchClosestDirectory,
+  searchClosest,
+} from 'search-closest'
 
 console.log(await searchFile(['config.json', 'config.yaml']))
 // "/path/to/config.json"
 
 console.log(await searchDirectory(['.git']))
 // "/path/to/.git"
+
+console.log(
+  await searchClosest(['yarn.lock', '.yarn'], {
+    filter: ({name, stats}) =>
+      (name === 'yarn.lock' && stats.isFile()) ||
+      (name === '.yarn' && stats.isDirectory()),
+  }),
+)
+// "/path/to/yarn.lock"
 ```
 
 #### `nameOrNames` (searchClosest)
