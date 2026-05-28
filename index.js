@@ -2,13 +2,13 @@ import {findDirectory, findFile} from 'find-in-directory'
 import iterateDirectoryUp from 'iterate-directory-up'
 
 /**
-@import {NameOrNames, Filter, FindOptions} from 'find-in-directory'
+@import {NameOrNames, FileOrDirectoryFilter, FindOptions} from 'find-in-directory'
 
 @typedef {Parameters<typeof iterateDirectoryUp>[1]} OptionalUrlOrPath
 
 @typedef {{
   allowSymlinks?: FindOptions['allowSymlinks'],
-  filter?: Filter,
+  filter?: FileOrDirectoryFilter,
   stopDirectory?: OptionalUrlOrPath,
   cache?: boolean,
 }} SearcherOptions
@@ -35,7 +35,7 @@ class Searcher {
   @protected
   @type {typeof findFile | typeof findDirectory}
   */
-  findInDirectory
+  findInDirectory = findFile
 
   /**
   @param {NameOrNames} nameOrNames
@@ -44,10 +44,16 @@ class Searcher {
   constructor(nameOrNames, {allowSymlinks, filter, stopDirectory, cache} = {}) {
     this.#stopDirectory = stopDirectory
     this.#cache = cache ?? true
+    /**
+    @param {string} directory
+    */
     this.#searchWithoutCache = (directory) =>
       this.findInDirectory(nameOrNames, {cwd: directory, filter, allowSymlinks})
   }
 
+  /**
+    @param {string} directory
+    */
   #search(directory, cache = true) {
     const resultCache = this.#resultCache
 
