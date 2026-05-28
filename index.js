@@ -40,7 +40,7 @@ import iterateDirectoryUp from 'iterate-directory-up'
 
 @typedef {Omit<SearchClosestOptions, "filter">} SearchClosestOptionsWithoutFilter
 
-@typedef {Promise<string | void>} SearchResult
+@typedef {Promise<string | undefined>} SearchResult
 */
 
 class SearcherInternal {
