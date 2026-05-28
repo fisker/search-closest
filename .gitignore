@@ -102,4 +102,7 @@ typings/
 .deleted/
 dist/
 /index.d.ts
+/searchers.d.ts
+/search-functions.d.ts
+/searcher.d.ts
 /fixtures
