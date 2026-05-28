@@ -18,4 +18,4 @@ class Searcher extends SearchInternal {
   findInDirectory = findInDirectory
 }
 
-export {FileSearcher, DirectorySearcher, Searcher}
+export {DirectorySearcher, FileSearcher, Searcher}

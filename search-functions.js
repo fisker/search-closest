@@ -1,4 +1,4 @@
-import {FileSearcher, DirectorySearcher, Searcher} from './searchers.js'
+import {DirectorySearcher, FileSearcher, Searcher} from './searchers.js'
 
 /**
 @import {NameOrNames} from 'find-in-directory/find.js'
@@ -65,4 +65,4 @@ function searchClosest(nameOrNames, options) {
   })
 }
 
-export {searchFile, searchDirectory, searchClosest}
+export {searchClosest, searchDirectory, searchFile}
