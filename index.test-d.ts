@@ -3,205 +3,124 @@ import {expectType} from 'tsd'
 import {
   FileSearcher,
   DirectorySearcher,
-  searchFile,
-  searchDirectory,
+  Searcher as AnySearcher,
+  searchClosestFile,
+  searchClosestDirectory,
+  searchClosest,
 } from './index.js'
 
-/* `FileSearcher` and `DirectorySearcher` */
-const fileSearcher = new FileSearcher('name')
-const directorySearcher = new DirectorySearcher('name')
+/* `{File,Directory,}Searcher` and `DirectorySearcher` */
+for (const Searcher of [FileSearcher, DirectorySearcher, AnySearcher]) {
+  const searcher = new Searcher('name')
 
-// `NameOrNames`
-expectType<string | void>(await new FileSearcher('name').search())
-expectType<string | void>(await new DirectorySearcher('name').search())
-expectType<string | void>(await new FileSearcher(['a', 'b']).search())
-expectType<string | void>(await new DirectorySearcher(['a', 'b']).search())
+  // `NameOrNames`
+  expectType<string | void>(await new Searcher('name').search())
+  expectType<string | void>(await new Searcher(['a', 'b']).search())
 
-// `options`
-expectType<string | void>(await new FileSearcher('name', {}).search())
-expectType<string | void>(await new DirectorySearcher('name', {}).search())
+  // `options`
+  expectType<string | void>(await new Searcher('name', {}).search())
 
-// `options.allowSymlinks`
-expectType<string | void>(
-  await new FileSearcher('name', {allowSymlinks: true}).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {allowSymlinks: true}).search(),
-)
+  // `options.allowSymlinks`
+  expectType<string | void>(
+    await new Searcher('name', {allowSymlinks: true}).search(),
+  )
 
-// `options.filter`
-expectType<string | void>(
-  await new FileSearcher('name', {filter: () => true}).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {filter: () => true}).search(),
-)
-expectType<string | void>(
-  await new FileSearcher('name', {
-    filter: () => Promise.resolve(true),
-  }).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {
-    filter: () => Promise.resolve(true),
-  }).search(),
-)
-expectType<string | void>(
-  await new FileSearcher('name', {
-    filter: () => Promise.resolve(true),
-  }).search(),
-)
+  // `options.filter`
+  expectType<string | void>(
+    await new Searcher('name', {filter: () => true}).search(),
+  )
+  expectType<string | void>(
+    await new Searcher('name', {
+      filter: () => Promise.resolve(true),
+    }).search(),
+  )
 
-// `options.stopDirectory`
-expectType<string | void>(
-  await new FileSearcher('name', {
-    stopDirectory: '/path/to/directory/',
-  }).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {
-    stopDirectory: '/path/to/directory/',
-  }).search(),
-)
-expectType<string | void>(
-  await new FileSearcher('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/'),
-  }).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/'),
-  }).search(),
-)
-expectType<string | void>(
-  await new FileSearcher('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/').href,
-  }).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/').href,
-  }).search(),
-)
-expectType<string | void>(
-  await new FileSearcher('name', {cache: true}).search(),
-)
-expectType<string | void>(
-  await new DirectorySearcher('name', {cache: true}).search(),
-)
+  // `options.stopDirectory`
+  expectType<string | void>(
+    await new Searcher('name', {stopDirectory: '/path/to/directory/'}).search(),
+  )
+  expectType<string | void>(
+    await new Searcher('name', {
+      stopDirectory: url.pathToFileURL('/path/to/directory/'),
+    }).search(),
+  )
+  expectType<string | void>(
+    await new Searcher('name', {
+      stopDirectory: url.pathToFileURL('/path/to/directory/').href,
+    }).search(),
+  )
+  expectType<string | void>(await new Searcher('name', {cache: true}).search())
 
-// `{FileSearcher,DirectorySearcher}#search()`
-expectType<string | void>(await fileSearcher.search())
-expectType<string | void>(await directorySearcher.search())
+  // `{File,Directory,}Searcher#search()`
+  expectType<string | void>(await searcher.search())
 
-// `startDirectory`
-expectType<string | void>(await fileSearcher.search('/path/to/directory/'))
-expectType<string | void>(await directorySearcher.search('/path/to/directory/'))
-expectType<string | void>(
-  await fileSearcher.search(url.pathToFileURL('/path/to/directory/')),
-)
-expectType<string | void>(
-  await directorySearcher.search(url.pathToFileURL('/path/to/directory/')),
-)
-expectType<string | void>(
-  await fileSearcher.search(url.pathToFileURL('/path/to/directory/').href),
-)
-expectType<string | void>(
-  await directorySearcher.search(url.pathToFileURL('/path/to/directory/').href),
-)
+  // `startDirectory`
+  expectType<string | void>(await searcher.search('/path/to/directory/'))
+  expectType<string | void>(await searcher.search('/path/to/directory/'))
+  expectType<string | void>(
+    await searcher.search(url.pathToFileURL('/path/to/directory/')),
+  )
+  expectType<string | void>(
+    await searcher.search(url.pathToFileURL('/path/to/directory/').href),
+  )
 
-// `options`
-expectType<string | void>(
-  await fileSearcher.search('/path/to/directory/', {cache: false}),
-)
-expectType<string | void>(
-  await directorySearcher.search('/path/to/directory/', {
-    cache: false,
-  }),
-)
+  // `options`
+  expectType<string | void>(
+    await searcher.search('/path/to/directory/', {cache: false}),
+  )
 
-// `{FileSearcher,DirectorySearcher}#clearCache()`
-expectType<void>(fileSearcher.clearCache())
-expectType<void>(directorySearcher.clearCache())
+  // `{File,Directory,}Searcher#clearCache()`
+  expectType<void>(searcher.clearCache())
+}
 
-/* `searchFile` and `searchDirectory` */
+/* `searchClosest{File,Directory,}`*/
 
-// `nameOrNames`
-expectType<string | void>(await searchFile('name'))
-expectType<string | void>(await searchDirectory('name'))
-expectType<string | void>(await searchFile(['a', 'b']))
-expectType<string | void>(await searchDirectory(['a', 'b']))
+for (const search of [
+  searchClosestFile,
+  searchClosestDirectory,
+  searchClosest,
+]) {
+  // `nameOrNames`
+  expectType<string | void>(await search('name'))
+  expectType<string | void>(await search(['a', 'b']))
 
-// `options`
-expectType<string | void>(await searchFile('name', {}))
-expectType<string | void>(await searchDirectory('name', {}))
+  // `options`
+  expectType<string | void>(await search('name', {}))
 
-// `options.allowSymlinks`
-expectType<string | void>(await searchFile('name', {allowSymlinks: true}))
-expectType<string | void>(await searchDirectory('name', {allowSymlinks: true}))
+  // `options.allowSymlinks`
+  expectType<string | void>(await search('name', {allowSymlinks: true}))
 
-// `options.cwd`
-expectType<string | void>(
-  await searchFile('name', {cwd: '/path/to/directory/'}),
-)
-expectType<string | void>(
-  await searchDirectory('name', {cwd: '/path/to/directory/'}),
-)
-expectType<string | void>(
-  await searchFile('name', {
-    cwd: url.pathToFileURL('/path/to/directory/'),
-  }),
-)
-expectType<string | void>(
-  await searchDirectory('name', {
-    cwd: url.pathToFileURL('/path/to/directory/'),
-  }),
-)
-expectType<string | void>(
-  await searchFile('name', {
-    cwd: url.pathToFileURL('/path/to/directory/').href,
-  }),
-)
-expectType<string | void>(
-  await searchDirectory('name', {
-    cwd: url.pathToFileURL('/path/to/directory/').href,
-  }),
-)
+  // `options.cwd`
+  expectType<string | void>(await search('name', {cwd: '/path/to/directory/'}))
+  expectType<string | void>(
+    await search('name', {
+      cwd: url.pathToFileURL('/path/to/directory/'),
+    }),
+  )
+  expectType<string | void>(
+    await search('name', {
+      cwd: url.pathToFileURL('/path/to/directory/').href,
+    }),
+  )
 
-// `options.stopDirectory`
-expectType<string | void>(
-  await searchFile('name', {stopDirectory: '/path/to/directory/'}),
-)
-expectType<string | void>(
-  await searchDirectory('name', {stopDirectory: '/path/to/directory/'}),
-)
-expectType<string | void>(
-  await searchFile('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/'),
-  }),
-)
-expectType<string | void>(
-  await searchDirectory('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/'),
-  }),
-)
-expectType<string | void>(
-  await searchFile('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/').href,
-  }),
-)
-expectType<string | void>(
-  await searchDirectory('name', {
-    stopDirectory: url.pathToFileURL('/path/to/directory/').href,
-  }),
-)
+  // `options.stopDirectory`
+  expectType<string | void>(
+    await search('name', {stopDirectory: '/path/to/directory/'}),
+  )
+  expectType<string | void>(
+    await search('name', {
+      stopDirectory: url.pathToFileURL('/path/to/directory/'),
+    }),
+  )
+  expectType<string | void>(
+    await search('name', {
+      stopDirectory: url.pathToFileURL('/path/to/directory/').href,
+    }),
+  )
 
-// `options.filter`
-expectType<string | void>(await searchFile('name', {filter: () => true}))
-expectType<string | void>(await searchDirectory('name', {filter: () => true}))
-expectType<string | void>(
-  await searchFile('name', {filter: () => Promise.resolve(true)}),
-)
-expectType<string | void>(
-  await searchDirectory('name', {filter: () => Promise.resolve(true)}),
-)
+  // `options.filter`
+  expectType<string | void>(await search('name', {filter: () => true}))
+  expectType<string | void>(
+    await search('name', {filter: () => Promise.resolve(true)}),
+  )
+}

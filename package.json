@@ -25,13 +25,7 @@
   },
   "files": [
     "index.js",
-    "index.d.ts",
-    "searchers.js",
-    "searchers.d.ts",
-    "search-functions.js",
-    "search-functions.d.ts",
-    "searcher.js",
-    "searcher.d.ts"
+    "index.d.ts"
   ],
   "scripts": {
     "build": "run-p clean \"build:*\"",
@@ -66,7 +60,7 @@
     ]
   },
   "dependencies": {
-    "find-in-directory": "^3.2.0",
+    "find-in-directory": "^4.0.1",
     "iterate-directory-up": "^1.5.1"
   },
   "devDependencies": {
