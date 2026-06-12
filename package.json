@@ -60,7 +60,7 @@
     ]
   },
   "dependencies": {
-    "find-in-directory": "^5.0.0",
+    "find-in-directory": "^5.0.1",
     "iterate-directory-up": "^1.5.1"
   },
   "devDependencies": {
