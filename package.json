@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "find-in-directory": "^5.0.2",
-    "iterate-directory-up": "^1.5.1"
+    "iterate-directory-up": "^1.5.2"
   },
   "devDependencies": {
     "@fisker/eslint-config": "16.0.0",
